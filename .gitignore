@@ -1,3 +1,5 @@
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -204,6 +206,10 @@ cython_debug/
 # .vscode/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
+
+# Interrupted atomic writes from the collection pipeline
+*.json.tmp
+*.jsonl.tmp
 
 # Ruff stuff:
 .ruff_cache/

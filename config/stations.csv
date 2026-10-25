@@ -1,1 +1,9 @@
-
+station_id,city,state,station_name,latitude,longitude,timezone,nws_station_id,ncei_station_id,settlement_source,active
+nyc_central_park,New York City,NY,"New York City, Central Park",40.78333,-73.96667,America/New_York,KNYC,USW00094728,verify_market_rules,true
+los_angeles_lax,Los Angeles,CA,"Los Angeles, Los Angeles International Airport",33.93806,-118.38889,America/Los_Angeles,KLAX,USW00023174,verify_market_rules,true
+chicago_ohare,Chicago,IL,"Chicago, Chicago-O'Hare International Airport",41.97972,-87.90444,America/Chicago,KORD,USW00094846,verify_market_rules,true
+miami_international,Miami,FL,"Miami, Miami International Airport",25.79056,-80.31639,America/New_York,KMIA,USW00012839,verify_market_rules,true
+dallas_love_field,Dallas,TX,Dallas Love Field,32.85416,-96.85506,America/Chicago,KDAL,USW00013960,verify_market_rules,true
+seattle_tacoma,Seattle,WA,"Seattle, Seattle-Tacoma International Airport",47.44472,-122.31361,America/Los_Angeles,KSEA,USW00024233,verify_market_rules,true
+boston_logan,Boston,MA,"Boston, Logan International Airport",42.36056,-71.01056,America/New_York,KBOS,USW00014739,verify_market_rules,true
+san_francisco_sfo,San Francisco,CA,"San Francisco, San Francisco International Airport",37.61961,-122.36558,America/Los_Angeles,KSFO,USW00023234,verify_market_rules,true
