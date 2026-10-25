@@ -23,16 +23,19 @@ def get_json(
     *,
     attempts: int = 3,
     timeout_seconds: int = 30,
+    headers: dict[str, str] | None = None,
+    redacted_url: str | None = None,
 ) -> Any:
-    headers = {
+    request_headers = {
         "Accept": "application/json",
         "User-Agent": os.getenv("WEATHER_USER_AGENT", DEFAULT_USER_AGENT),
     }
+    request_headers.update(headers or {})
 
     last_error: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
-            request = Request(url, headers=headers)
+            request = Request(url, headers=request_headers)
             with urlopen(request, timeout=timeout_seconds) as response:
                 return json.load(response)
         except HTTPError as exc:
@@ -45,4 +48,5 @@ def get_json(
         if attempt < attempts:
             time.sleep(2 ** (attempt - 1))
 
-    raise RequestError(f"Request failed after {attempts} attempts: {url}") from last_error
+    safe_url = redacted_url or url
+    raise RequestError(f"Request failed after {attempts} attempts: {safe_url}") from last_error

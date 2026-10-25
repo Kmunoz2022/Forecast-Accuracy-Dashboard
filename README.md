@@ -17,6 +17,10 @@ markets and runs automatically with GitHub Actions.
 
 - **Open-Meteo** supplies the next-local-day high and low forecast. Its weather
   data is available under CC BY 4.0 and is stored with attribution.
+- **OpenWeather** is enabled automatically when `OPENWEATHERMAP_API_KEY` is
+  available. Its free five-day endpoint has three-hour resolution, so the
+  collector derives local-calendar-day extrema from those forecast points and
+  records that aggregation method with every row.
 - **NOAA/NCEI Daily Summaries** supplies observed station highs and lows. NOAA
   reports can arrive several days late, so the collector rechecks the preceding
   14 days and records corrections without creating duplicates.
@@ -105,6 +109,29 @@ After merging the workflow into the default branch:
 3. Open **Actions → Collect daily weather data → Run workflow** once.
 4. Confirm that the run creates forecast and observation files under `data/`.
 5. Enable GitHub Actions failure notifications for the repository/account.
+
+### Optional provider configuration
+
+The workflow recognizes these existing secret names:
+
+- `OPENWEATHERMAP_API_KEY` — collected automatically.
+- `WEATHERBIT_API_KEY` — collected only when the repository variable
+  `WEATHERBIT_ARCHIVAL_ALLOWED` is set to `true`. Use this only with an active
+  paid plan whose storage terms cover the project.
+- `TOMORROW_API_KEYS` — collected only when the repository variable
+  `TOMORROW_ARCHIVAL_ALLOWED` is set to `true`, after written retention rights
+  are confirmed.
+
+Create repository variables under **Settings → Secrets and variables → Actions →
+Variables**. `GOOGLE_MAPS_DEMO_API_KEY` and `WEATHERAPI_API_KEY` are intentionally
+not passed into the collection process because their standard forecast terms
+limit retention to 24 hours.
+
+This GitHub repository was public when the provider integration was developed.
+If the project is intended to remain private, change its visibility under
+**Settings → General → Danger Zone → Change repository visibility** before
+enabling any licensed provider. Repository visibility does not alter a
+provider's retention or redistribution terms.
 
 If branch protection prevents the bot from pushing to the default branch, either
 allow GitHub Actions to bypass that rule for this workflow or change the storage

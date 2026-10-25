@@ -16,6 +16,15 @@ from weather_pipeline.providers.ncei import normalize_response as normalize_ncei
 from weather_pipeline.providers.open_meteo import (  # noqa: E402
     normalize_response as normalize_open_meteo,
 )
+from weather_pipeline.providers.openweathermap import (  # noqa: E402
+    normalize_response as normalize_openweathermap,
+)
+from weather_pipeline.providers.tomorrow_io import (  # noqa: E402
+    normalize_response as normalize_tomorrow_io,
+)
+from weather_pipeline.providers.weatherbit import (  # noqa: E402
+    normalize_response as normalize_weatherbit,
+)
 from weather_pipeline.storage import read_jsonl, upsert_jsonl  # noqa: E402
 
 
@@ -57,6 +66,65 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(67.0, records[0]["actual_high_f"])
         self.assertEqual(50.0, records[0]["actual_low_f"])
         self.assertTrue(records[0]["complete"])
+
+    def test_openweathermap_aggregates_target_local_day(self) -> None:
+        payload = {
+            "list": [
+                {
+                    "dt": int(datetime(2026, 10, 26, 6, tzinfo=timezone.utc).timestamp()),
+                    "main": {"temp_max": 52.0, "temp_min": 48.0},
+                },
+                {
+                    "dt": int(datetime(2026, 10, 26, 18, tzinfo=timezone.utc).timestamp()),
+                    "main": {"temp_max": 71.0, "temp_min": 66.0},
+                },
+            ]
+        }
+        record = normalize_openweathermap(
+            self.stations[0],
+            payload,
+            retrieved_at=datetime(2026, 10, 25, 12, 17, tzinfo=timezone.utc),
+            source_url="https://example.test",
+        )
+        self.assertEqual(71.0, record["forecast_high_f"])
+        self.assertEqual(48.0, record["forecast_low_f"])
+        self.assertEqual("3h", record["source_resolution"])
+
+    def test_weatherbit_selects_midnight_to_midnight_values(self) -> None:
+        payload = {
+            "data": [
+                {"valid_date": "2026-10-25", "max_temp": 65, "min_temp": 42},
+                {"valid_date": "2026-10-26", "max_temp": 72, "min_temp": 49},
+            ]
+        }
+        record = normalize_weatherbit(
+            self.stations[0],
+            payload,
+            retrieved_at=datetime(2026, 10, 25, 12, 17, tzinfo=timezone.utc),
+            source_url="https://example.test",
+        )
+        self.assertEqual(72.0, record["forecast_high_f"])
+        self.assertEqual(49.0, record["forecast_low_f"])
+
+    def test_tomorrow_io_aggregates_hourly_target_local_day(self) -> None:
+        payload = {
+            "timelines": {
+                "hourly": [
+                    {"time": "2026-10-26T04:00:00Z", "values": {"temperature": 47}},
+                    {"time": "2026-10-26T18:00:00Z", "values": {"temperature": 73}},
+                    {"time": "2026-10-27T04:00:00Z", "values": {"temperature": 50}},
+                ]
+            }
+        }
+        record = normalize_tomorrow_io(
+            self.stations[0],
+            payload,
+            retrieved_at=datetime(2026, 10, 25, 12, 17, tzinfo=timezone.utc),
+            source_url="https://example.test",
+        )
+        self.assertEqual(73.0, record["forecast_high_f"])
+        self.assertEqual(47.0, record["forecast_low_f"])
+        self.assertEqual("1h", record["source_resolution"])
 
     def test_jsonl_upsert_is_idempotent(self) -> None:
         row = {"provider": "test", "station_id": "abc", "value": 1}

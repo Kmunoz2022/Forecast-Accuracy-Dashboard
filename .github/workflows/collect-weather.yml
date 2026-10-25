@@ -44,6 +44,16 @@ jobs:
         id: forecasts
         continue-on-error: true
         shell: bash
+        env:
+          OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
+          WEATHERBIT_API_KEY: ${{ secrets.WEATHERBIT_API_KEY }}
+          WEATHERBIT_ARCHIVAL_ALLOWED: ${{ vars.WEATHERBIT_ARCHIVAL_ALLOWED }}
+          TOMORROW_API_KEYS: ${{ secrets.TOMORROW_API_KEYS }}
+          TOMORROW_ARCHIVAL_ALLOWED: ${{ vars.TOMORROW_ARCHIVAL_ALLOWED }}
+          # These are intentionally not passed to the collector because their
+          # standard forecast terms limit retention to 24 hours:
+          # GOOGLE_MAPS_DEMO_API_KEY
+          # WEATHERAPI_API_KEY
         run: |
           args=()
           if [[ "${{ inputs.refresh }}" == "true" ]]; then
