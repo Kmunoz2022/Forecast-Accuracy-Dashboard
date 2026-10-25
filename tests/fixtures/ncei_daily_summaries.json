@@ -1,0 +1,18 @@
+[
+  {
+    "STATION": "USW00094728",
+    "DATE": "2026-10-20",
+    "TMAX": "67",
+    "TMAX_ATTRIBUTES": ",,1",
+    "TMIN": "50",
+    "TMIN_ATTRIBUTES": ",,1"
+  },
+  {
+    "STATION": "USW00023174",
+    "DATE": "2026-10-20",
+    "TMAX": "82",
+    "TMAX_ATTRIBUTES": ",,1",
+    "TMIN": "64",
+    "TMIN_ATTRIBUTES": ",,1"
+  }
+]
