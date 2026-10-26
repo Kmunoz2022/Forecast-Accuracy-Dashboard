@@ -17,6 +17,7 @@ from weather_pipeline.providers.openweathermap import fetch_forecast as fetch_op
 from weather_pipeline.providers.tomorrow_io import fetch_forecast as fetch_tomorrow_io
 from weather_pipeline.providers.weatherbit import fetch_forecast as fetch_weatherbit
 from weather_pipeline.storage import read_jsonl, upsert_jsonl, write_json
+from weather_pipeline.windows import ForecastWindow
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -61,15 +62,21 @@ def _enabled(value: str | None) -> bool:
     return (value or "").strip().lower() in {"1", "true", "yes"}
 
 
-def configured_providers(retrieved_at: datetime) -> list[EnabledProvider]:
+def configured_providers(
+    retrieved_at: datetime, window: ForecastWindow | None = None, *, quiet: bool = False,
+) -> list[EnabledProvider]:
+    def announce(message: str) -> None:
+        if not quiet:
+            print(message)
+
     providers = [
         EnabledProvider(
             slug="open_meteo",
-            fetch=lambda station: fetch_open_meteo(station, retrieved_at=retrieved_at),
+            fetch=lambda station: fetch_open_meteo(station, retrieved_at=retrieved_at, window=window),
         ),
         EnabledProvider(
             slug="nws",
-            fetch=lambda station: fetch_nws(station, retrieved_at=retrieved_at),
+            fetch=lambda station: fetch_nws(station, retrieved_at=retrieved_at, window=window),
         ),
     ]
 
@@ -82,14 +89,17 @@ def configured_providers(retrieved_at: datetime) -> list[EnabledProvider]:
                     station,
                     retrieved_at=retrieved_at,
                     api_key=openweather_key,
+                    window=window,
                 ),
             )
         )
     else:
-        print("OPENWEATHERMAP_API_KEY is not set; skipping OpenWeather")
+        announce("OPENWEATHERMAP_API_KEY is not set; skipping OpenWeather")
 
     weatherbit_key = os.getenv("WEATHERBIT_API_KEY")
-    if weatherbit_key and _enabled(os.getenv("WEATHERBIT_ARCHIVAL_ALLOWED")):
+    if window is not None and weatherbit_key:
+        announce("Weatherbit daily aggregates cannot reproduce a standard-time window; market snapshots skip it.")
+    elif weatherbit_key and _enabled(os.getenv("WEATHERBIT_ARCHIVAL_ALLOWED")):
         providers.append(
             EnabledProvider(
                 slug="weatherbit",
@@ -101,7 +111,7 @@ def configured_providers(retrieved_at: datetime) -> list[EnabledProvider]:
             )
         )
     elif weatherbit_key:
-        print(
+        announce(
             "WEATHERBIT_API_KEY is set, but archival collection is disabled. "
             "Set WEATHERBIT_ARCHIVAL_ALLOWED=true only for an active plan that permits storage."
         )
@@ -115,19 +125,20 @@ def configured_providers(retrieved_at: datetime) -> list[EnabledProvider]:
                     station,
                     retrieved_at=retrieved_at,
                     api_key=tomorrow_key,
+                    window=window,
                 ),
             )
         )
     elif tomorrow_key:
-        print(
+        announce(
             "TOMORROW_API_KEYS is set, but archival collection is disabled. "
             "Set TOMORROW_ARCHIVAL_ALLOWED=true after confirming retention rights."
         )
 
     if os.getenv("GOOGLE_MAPS_DEMO_API_KEY"):
-        print("Google Weather is not archived because daily forecast retention is limited to 24 hours.")
+        announce("Google Weather is not archived because daily forecast retention is limited to 24 hours.")
     if os.getenv("WEATHERAPI_API_KEY"):
-        print("WeatherAPI is not archived because forecast retention is limited to 24 hours.")
+        announce("WeatherAPI is not archived because forecast retention is limited to 24 hours.")
 
     return providers
 

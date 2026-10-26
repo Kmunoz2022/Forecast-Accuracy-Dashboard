@@ -1,0 +1,9 @@
+station_id,city,state,station_name,latitude,longitude,timezone,nws_station_id,ncei_station_id,settlement_source,active
+nyc_central_park,New York City,NY,"New York City, Central Park",40.78333,-73.96667,America/New_York,KNYC,,market_contract,true
+los_angeles_lax,Los Angeles,CA,"Los Angeles, Los Angeles International Airport",33.93806,-118.38889,America/Los_Angeles,KLAX,,market_contract,true
+chicago_midway,Chicago,IL,"Chicago, Chicago Midway Airport",41.78417,-87.75528,America/Chicago,KMDW,,market_contract,true
+miami_international,Miami,FL,"Miami, Miami International Airport",25.79056,-80.31639,America/New_York,KMIA,,market_contract,true
+dallas_fort_worth,Dallas,TX,Dallas/Fort Worth International Airport,32.89743,-97.02196,America/Chicago,KDFW,,market_contract,true
+seattle_tacoma,Seattle,WA,"Seattle, Seattle-Tacoma International Airport",47.44472,-122.31361,America/Los_Angeles,KSEA,,market_contract,true
+boston_logan,Boston,MA,"Boston, Logan International Airport",42.36056,-71.01056,America/New_York,KBOS,,market_contract,true
+san_francisco_sfo,San Francisco,CA,"San Francisco, San Francisco International Airport",37.61961,-122.36558,America/Los_Angeles,KSFO,,market_contract,true
