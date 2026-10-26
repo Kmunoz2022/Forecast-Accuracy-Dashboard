@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 from weather_pipeline.config import Station
 from weather_pipeline.http import get_json
 from weather_pipeline.temperatures import sampled_extrema
+from weather_pipeline.windows import ForecastWindow
 
 
 BASE_URL = "https://api.openweathermap.org/data/2.5/forecast"
@@ -33,6 +34,7 @@ def normalize_response(
     *,
     retrieved_at: datetime,
     source_url: str,
+    window: ForecastWindow | None = None,
 ) -> dict[str, Any]:
     target_date = retrieved_at.astimezone(ZoneInfo(station.timezone)).date() + timedelta(days=1)
     samples = []
@@ -44,7 +46,7 @@ def normalize_response(
             datetime.fromtimestamp(timestamp, tz=timezone.utc),
             point.get("main", {}).get("temp"),
         ))
-    extrema = sampled_extrema(station, samples, retrieved_at=retrieved_at, step_hours=3)
+    extrema = sampled_extrema(station, samples, retrieved_at=retrieved_at, step_hours=3, window=window)
 
     return {
         "schema_version": 1,
@@ -63,6 +65,7 @@ def normalize_response(
         "aggregation_method": "max_min_of_3_hour_temperature",
         "source_url": source_url,
         "attribution": ATTRIBUTION,
+        **(window.metadata() if window else {}),
     }
 
 
@@ -72,6 +75,7 @@ def fetch_forecast(
     retrieved_at: datetime,
     api_key: str,
     fetch_json: Callable[..., Any] = get_json,
+    window: ForecastWindow | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any], str]:
     request_url, public_url = build_urls(station, api_key)
     payload = fetch_json(request_url, redacted_url=public_url)
@@ -82,5 +86,6 @@ def fetch_forecast(
         payload,
         retrieved_at=retrieved_at,
         source_url=public_url,
+        window=window,
     )
     return record, payload, public_url

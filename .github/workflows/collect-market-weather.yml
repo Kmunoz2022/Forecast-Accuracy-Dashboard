@@ -1,0 +1,63 @@
+name: Collect Kalshi opening forecasts
+
+on:
+  schedule:
+    # Hourly discovery/recovery covers openings that move or differ by city.
+    - cron: "7 * * * *"
+    # Warm runner near 10 AM ET in both DST and standard time. Actual open_time
+    # is read from Kalshi; these are polling opportunities, not assumed openings.
+    - cron: "57 13,14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Both data-writing workflows share this group to avoid conflicting commits.
+concurrency:
+  group: daily-weather-collection
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install timezone data
+        run: python -m pip install "tzdata>=2025.2"
+      - name: Test
+        run: python -m unittest discover -s tests -v
+      - name: Discover markets and capture opening forecasts
+        id: collect
+        continue-on-error: true
+        env:
+          OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
+          TOMORROW_API_KEYS: ${{ secrets.TOMORROW_API_KEYS }}
+          TOMORROW_ARCHIVAL_ALLOWED: ${{ vars.TOMORROW_ARCHIVAL_ALLOWED }}
+          TRIGGER_SCHEDULE: ${{ github.event.schedule }}
+        shell: bash
+        run: |
+          args=()
+          if [[ "$TRIGGER_SCHEDULE" == "57 13,14 * * *" ]]; then
+            args+=(--wait-seconds 300)
+          fi
+          python src/collect_market_forecasts.py "${args[@]}"
+      - name: Commit collected market data
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No new market data to commit."
+            exit 0
+          fi
+          git commit -m "data: collect market opening snapshots [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push
+      - name: Report collection failure
+        if: steps.collect.outcome == 'failure'
+        run: exit 1

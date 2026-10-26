@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 from weather_pipeline.config import Station
 from weather_pipeline.http import get_json
 from weather_pipeline.temperatures import sampled_extrema
+from weather_pipeline.windows import ForecastWindow
 
 
 BASE_URL = "https://api.weather.gov"
@@ -20,6 +21,7 @@ def normalize_response(
     *,
     retrieved_at: datetime,
     source_url: str,
+    window: ForecastWindow | None = None,
 ) -> dict[str, Any]:
     target_date = retrieved_at.astimezone(ZoneInfo(station.timezone)).date() + timedelta(days=1)
     properties = payload.get("properties", {})
@@ -34,7 +36,7 @@ def normalize_response(
             elif unit != "F":
                 raise ValueError(f"Unsupported NWS temperature unit: {unit!r}")
         samples.append((timestamp, temperature))
-    extrema = sampled_extrema(station, samples, retrieved_at=retrieved_at, step_hours=1)
+    extrema = sampled_extrema(station, samples, retrieved_at=retrieved_at, step_hours=1, window=window)
     return {
         "schema_version": 1,
         "provider": "nws",
@@ -53,6 +55,7 @@ def normalize_response(
         "aggregation_method": "max_min_of_hourly_points",
         "source_url": source_url,
         "attribution": ATTRIBUTION,
+        **(window.metadata() if window else {}),
     }
 
 
@@ -61,6 +64,7 @@ def fetch_forecast(
     *,
     retrieved_at: datetime,
     fetch_json: Callable[..., Any] = get_json,
+    window: ForecastWindow | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any], str]:
     # Refresh the grid mapping daily: NWS offices/grid coordinates can change.
     point_url = f"{BASE_URL}/points/{station.latitude:.4f},{station.longitude:.4f}"
@@ -75,5 +79,5 @@ def fetch_forecast(
     payload = fetch_json(url, headers=headers)
     if not isinstance(payload, dict):
         raise ValueError("NWS returned a non-object forecast")
-    record = normalize_response(station, payload, retrieved_at=retrieved_at, source_url=url)
+    record = normalize_response(station, payload, retrieved_at=retrieved_at, source_url=url, window=window)
     return record, payload, url

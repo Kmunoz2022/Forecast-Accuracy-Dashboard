@@ -13,6 +13,12 @@ locations, then compares them with NOAA daily high and low observations. The
 initial pipeline covers eight U.S. locations commonly referenced by weather
 markets and runs automatically with GitHub Actions.
 
+All collectors use the Kalshi station locations in one registry,
+`config/stations.csv`. Morning forecasts and Kalshi opening snapshots remain
+separate because their collection times and temperature-day definitions differ.
+Historical O'Hare and Love Field records predate the corrected station mapping
+and must be excluded from comparisons with Midway and DFW contracts.
+
 ## Current data sources
 
 - **Open-Meteo** supplies the next-local-day high and low forecast. Its weather
@@ -55,15 +61,15 @@ they are not equivalent to native daily maxima/minima.
 
 ## Locations
 
-Station metadata lives in [`config/stations.csv`](config/stations.csv). It
+All collector station metadata lives in [`config/stations.csv`](config/stations.csv). It
 contains verified NWS coordinates and the corresponding NOAA/NCEI identifiers
 for:
 
 - New York City — Central Park
 - Los Angeles — Los Angeles International Airport
-- Chicago — O'Hare International Airport
+- Chicago — Midway International Airport
 - Miami — Miami International Airport
-- Dallas — Dallas Love Field
+- Dallas — Dallas/Fort Worth International Airport
 - Seattle — Seattle-Tacoma International Airport
 - Boston — Logan International Airport
 - San Francisco — San Francisco International Airport
@@ -72,6 +78,91 @@ The `settlement_source` values are deliberately set to `verify_market_rules`.
 Market rules can differ or change, and neither an NWS station identifier nor an
 NCEI daily summary should be assumed to be the official settlement source until
 the exact contract rules are checked.
+
+[`config/kalshi_markets.json`](config/kalshi_markets.json) links this same registry
+to Kalshi's series and climate-report codes. Chicago uses **Midway (KMDW / CLIMDW)**
+and Dallas uses **Dallas-Fort Worth (KDFW / CLIDFW)**. Their NOAA/NCEI observation
+IDs are [USW00014819](https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND%3AUSW00014819/detail)
+and [USW00003927](https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND%3AUSW00003927/detail).
+Both workflows collect these stations going forward; the duplicate market station
+file has been removed. Earlier O'Hare/Love Field records retain their original IDs
+and are not relabeled as observations or forecasts for different airports.
+
+## Kalshi opening snapshots
+
+`Collect Kalshi opening forecasts` runs separately from the daily research job.
+It discovers the configured 16 daily high/low series through Kalshi's public
+read-only API, including unopened contracts. No Kalshi key is required.
+
+- Opening times come from each contract's `open_time`, not a hardcoded city time.
+- Contract metadata stores the market/event IDs, opening/closing timestamps,
+  threshold information, primary/secondary rules, settlement source, terms URL,
+  and a rules-version hash. Changed rules are retained as new versions.
+- Station climate codes, temperature metric, units, date, source, and closing
+  time must pass the configured checks before a forecast is scheduled. A mismatch
+  is saved for inspection and makes the run fail without hiding other successes.
+- The reporting window is midnight-to-midnight **local standard time**, always
+  24 hours. In daylight-saving time this appears as 1 AM to 1 AM. Its end must
+  match the contract's closing timestamp. This is a configured policy checked
+  against the contract, not an inference that every possible weather market uses
+  that window. Unknown formats require reviewing the mapping/validation code.
+- Open-Meteo, NWS, OpenWeather, and authorized Tomorrow.io collect hourly or
+  three-hour temperatures for this explicit window. Weatherbit's current daily
+  endpoint is skipped here because its daily aggregates cannot be shifted.
+- Identical station/date/opening combinations reuse one provider request for
+  high and low events. Each event still gets its own linked forecast record.
+- The first successful snapshot for each provider/event/opening is immutable.
+  Reruns collect only missing snapshots; there is no market `--refresh` or
+  historical `--as-of` option.
+
+The workflow checks at minute 7 every hour, with additional runs at 13:57 and
+14:57 UTC to cover the usual 10 AM Eastern opening in either season. Those two
+runs poll for up to five minutes. This is 26 scheduled runs per day, so private
+repositories should account for Actions minutes. Both data workflows share a
+concurrency group and rebase their data commits before pushing.
+
+GitHub can delay or drop scheduled runs. Every response records its actual
+request-start/retrieval timestamps and `seconds_after_market_open`:
+
+| Capture status | Meaning |
+| --- | --- |
+| `near_open` | Response arrived within the configured tolerance (default 600 seconds) after opening |
+| `late` | First available response arrived later, but before the measurement day began |
+| `missed_before_measurement_start` | No snapshot exists and the measurement day has already begun; no historical forecast is fabricated |
+
+For opening-time comparisons, filter `eligible_for_opening_comparison=true` and
+choose a delay tolerance appropriate to the analysis. `near_open` does **not**
+mean an exact opening-second capture. Intraday forecasts and opening prices are
+not collected. For strict timing guarantees, use a continuously running external
+scheduler; changing GitHub's cron alone cannot guarantee an exact start.
+
+The live October 2026 contracts checked during implementation name **The Weather
+Company**, even though Kalshi's general weather help page describes NWS daily
+settlement. The collector preserves each actual contract's source and never
+labels NOAA/NCEI observations as Kalshi settlement data. It stores `result` and
+`expiration_value` when returned for recent contracts (a two-day closing-time
+lookback); these are Kalshi API fields, not a scraped official weather report.
+Long-delayed settlements require a separate historical backfill later.
+
+References: [Kalshi market API](https://docs.kalshi.com/api-reference/market/get-markets),
+[GLOBALTEMPERATURE contract](https://assets.kalshi.com/contract_terms/GLOBALTEMPERATURE.pdf),
+[official Weather Company reports](https://weather.com/kalshi),
+[Kalshi weather help](https://help.kalshi.com/en/articles/13823837-weather-markets).
+
+After merging, open **Actions > Collect Kalshi opening forecasts > Run workflow**.
+A manual run captures current eligible events and labels late arrivals honestly;
+it cannot reconstruct the forecast that existed at a past opening.
+
+```shell
+# Inspect and save contracts without any weather requests.
+python src/collect_market_forecasts.py --discover-only
+
+# Collect missing eligible opening snapshots now.
+python src/collect_market_forecasts.py
+
+# Poll briefly near an upcoming opening (maximum 300 seconds).
+python src/collect_market_forecasts.py --wait-seconds 300
+```
 
 ## Run locally
 

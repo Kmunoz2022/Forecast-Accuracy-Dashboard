@@ -8,6 +8,7 @@ from typing import Any, Iterable
 from zoneinfo import ZoneInfo
 
 from weather_pipeline.config import Station
+from weather_pipeline.windows import ForecastWindow
 
 
 def sampled_extrema(
@@ -16,6 +17,7 @@ def sampled_extrema(
     *,
     retrieved_at: datetime,
     step_hours: int,
+    window: ForecastWindow | None = None,
 ) -> dict[str, Any]:
     """Require every UTC-aligned sample in tomorrow's local day, including DST."""
     if retrieved_at.tzinfo is None:
@@ -26,6 +28,8 @@ def sampled_extrema(
     target = retrieved_at.astimezone(zone).date() + timedelta(days=1)
     start = datetime.combine(target, time.min, zone).astimezone(timezone.utc)
     end = datetime.combine(target + timedelta(days=1), time.min, zone).astimezone(timezone.utc)
+    if window is not None:
+        target, start, end = window.target_date, window.start, window.end
     step_seconds = step_hours * 3600
     first = math.ceil(start.timestamp() / step_seconds) * step_seconds
     expected = set(range(first, int(end.timestamp()), step_seconds))

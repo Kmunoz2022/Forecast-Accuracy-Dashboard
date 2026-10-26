@@ -88,6 +88,18 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(48.0, record["forecast_low_f"])
         self.assertEqual("3h", record["source_resolution"])
 
+    def test_noaa_observations_map_to_kalshi_airports_not_legacy_stations(self) -> None:
+        payload = [
+            {"STATION": station_id, "DATE": "2026-10-25", "TMAX": "70", "TMIN": "50"}
+            for station_id in ("USW00014819", "USW00003927", "USW00094846", "USW00013960")
+        ]
+        records = normalize_ncei(
+            self.stations, payload,
+            retrieved_at=datetime(2026, 10, 26, 12, 17, tzinfo=timezone.utc),
+        )
+        self.assertEqual({"chicago_midway", "dallas_fort_worth"}, {r["station_id"] for r in records})
+        self.assertEqual(2, len(records))
+
     def test_weatherbit_selects_midnight_to_midnight_values(self) -> None:
         payload = {
             "data": [

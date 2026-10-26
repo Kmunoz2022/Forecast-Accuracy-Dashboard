@@ -1,0 +1,10 @@
+[
+  {"station_id":"nyc_central_park","climate_code":"CLINYC","high_series":"KXHIGHNY","low_series":"KXLOWTNYC"},
+  {"station_id":"los_angeles_lax","climate_code":"CLILAX","high_series":"KXHIGHLAX","low_series":"KXLOWTLAX"},
+  {"station_id":"chicago_midway","climate_code":"CLIMDW","high_series":"KXHIGHCHI","low_series":"KXLOWTCHI"},
+  {"station_id":"miami_international","climate_code":"CLIMIA","high_series":"KXHIGHMIA","low_series":"KXLOWTMIA"},
+  {"station_id":"dallas_fort_worth","climate_code":"CLIDFW","high_series":"KXHIGHTDAL","low_series":"KXLOWTDAL"},
+  {"station_id":"seattle_tacoma","climate_code":"CLISEA","high_series":"KXHIGHTSEA","low_series":"KXLOWTSEA"},
+  {"station_id":"boston_logan","climate_code":"CLIBOS","high_series":"KXHIGHTBOS","low_series":"KXLOWTBOS"},
+  {"station_id":"san_francisco_sfo","climate_code":"CLISFO","high_series":"KXHIGHTSFO","low_series":"KXLOWTSFO"}
+]
