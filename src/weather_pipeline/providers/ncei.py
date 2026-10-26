@@ -17,6 +17,7 @@ def build_url(stations: Iterable[Station], start_date: date, end_date: date) -> 
     query = urlencode(
         {
             "dataset": "daily-summaries",
+            "dataTypes": "TMAX,TMIN",
             "stations": station_ids,
             "startDate": start_date.isoformat(),
             "endDate": end_date.isoformat(),

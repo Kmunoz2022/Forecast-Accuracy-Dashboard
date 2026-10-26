@@ -10,6 +10,8 @@ from typing import Any, Callable
 from zoneinfo import ZoneInfo
 
 from weather_pipeline.config import Station, load_stations
+from weather_pipeline.http import RequestError
+from weather_pipeline.providers.nws import fetch_forecast as fetch_nws
 from weather_pipeline.providers.open_meteo import fetch_forecast as fetch_open_meteo
 from weather_pipeline.providers.openweathermap import fetch_forecast as fetch_openweathermap
 from weather_pipeline.providers.tomorrow_io import fetch_forecast as fetch_tomorrow_io
@@ -28,9 +30,12 @@ class EnabledProvider:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Collect next-day Open-Meteo forecasts")
+    parser = argparse.ArgumentParser(description="Collect next-day temperature forecasts")
     parser.add_argument("--stations", type=Path, default=PROJECT_ROOT / "config/stations.csv")
     parser.add_argument("--data-dir", type=Path, default=PROJECT_ROOT / "data")
+    parser.add_argument(
+        "--save-raw", action="store_true", help="Also archive full API responses for debugging"
+    )
     parser.add_argument(
         "--as-of",
         help="UTC collection timestamp for reproducible runs (ISO 8601)",
@@ -61,7 +66,11 @@ def configured_providers(retrieved_at: datetime) -> list[EnabledProvider]:
         EnabledProvider(
             slug="open_meteo",
             fetch=lambda station: fetch_open_meteo(station, retrieved_at=retrieved_at),
-        )
+        ),
+        EnabledProvider(
+            slug="nws",
+            fetch=lambda station: fetch_nws(station, retrieved_at=retrieved_at),
+        ),
     ]
 
     openweather_key = os.getenv("OPENWEATHERMAP_API_KEY")
@@ -127,6 +136,9 @@ def main() -> int:
     args = parse_args()
     retrieved_at = parse_as_of(args.as_of)
     stations = [station for station in load_stations(args.stations) if station.active]
+    if not stations:
+        print("No active stations; no requests made.")
+        return 0
     providers = configured_providers(retrieved_at)
     snapshot_date = retrieved_at.date().isoformat()
     year, month, _ = snapshot_date.split("-")
@@ -137,12 +149,15 @@ def main() -> int:
 
     records = []
     failures: list[str] = []
+    targets = {
+        station.station_id: (
+            retrieved_at.astimezone(ZoneInfo(station.timezone)).date() + timedelta(days=1)
+        ).isoformat()
+        for station in stations
+    }
     for provider in providers:
         for station in stations:
-            local_target = (
-                retrieved_at.astimezone(ZoneInfo(station.timezone)).date()
-                + timedelta(days=1)
-            ).isoformat()
+            local_target = targets[station.station_id]
             expected_key = (provider.slug, station.station_id, local_target, snapshot_date)
             if expected_key in existing_keys and not args.refresh:
                 print(
@@ -152,23 +167,27 @@ def main() -> int:
                 continue
             try:
                 record, payload, _ = provider.fetch(station)
+                if args.save_raw:
+                    raw_path = (
+                        args.data_dir
+                        / "raw"
+                        / provider.slug
+                        / year
+                        / month
+                        / snapshot_date
+                        / f"{station.station_id}.json"
+                    )
+                    write_json(raw_path, payload)
                 records.append(record)
-                raw_path = (
-                    args.data_dir
-                    / "raw"
-                    / provider.slug
-                    / year
-                    / month
-                    / snapshot_date
-                    / f"{station.station_id}.json"
-                )
-                write_json(raw_path, payload)
                 print(
                     f"Collected {provider.slug} {station.station_id} forecast "
                     f"for {record['target_date_local']}"
                 )
             except Exception as exc:  # continue so one location cannot hide other successes
                 failures.append(f"{provider.slug}/{station.station_id}: {exc}")
+                if isinstance(exc, RequestError) and exc.status_code in {401, 403, 429}:
+                    print(f"Stopping {provider.slug}: authentication/access/quota error; see failure report.")
+                    break
 
     changes = upsert_jsonl(
         output_path,
