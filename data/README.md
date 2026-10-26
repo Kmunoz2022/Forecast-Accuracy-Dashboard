@@ -8,7 +8,7 @@ The collection workflow writes deterministic, date-partitioned files here:
   partitioned by the market's temperature date and keyed by ticker/rules version.
 - `market_forecasts/YYYY/MM/YYYY-MM-DD.jsonl` contains immutable first forecasts
   after a market opens, keyed by provider/event/opening timestamp. These use the
-  separate market stations and a 24-hour local-standard-time reporting window.
+  shared `config/stations.csv` registry and a 24-hour local-standard-time window.
 - `market_collection/YYYY/MM/YYYY-MM-DD.jsonl` records capture status, including
   missed openings and provider failures that must not be mistaken for data.
 - `raw/<provider>/...` preserves source responses only when the collector runs
@@ -24,6 +24,10 @@ Only `eligible_for_opening_comparison=true` rows meet the configured timing tole
 other retained forecasts are marked `late`. The original daily research snapshots
 are not replaced by market snapshots. Do not join O'Hare/Love Field observations to
 Midway/DFW markets or treat NOAA/NCEI as The Weather Company's settlement report.
+All future collection uses the Kalshi stations in the shared registry, including
+Midway and DFW. Legacy O'Hare/Love Field rows remain unchanged for provenance and
+must be excluded from Kalshi station comparisons. The NOAA lookback automatically
+adds available Midway/DFW observations; historical forecasts cannot be recreated.
 
 Open-Meteo data requires attribution under CC BY 4.0. NOAA/NCEI data is U.S.
 government open data. Do not add another provider's raw or normalized data until

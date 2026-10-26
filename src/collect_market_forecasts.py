@@ -139,7 +139,7 @@ def collect_events(
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stations", type=Path, default=PROJECT_ROOT / "config/market_stations.csv")
+    parser.add_argument("--stations", type=Path, default=PROJECT_ROOT / "config/stations.csv")
     parser.add_argument("--mappings", type=Path, default=PROJECT_ROOT / "config/kalshi_markets.json")
     parser.add_argument("--data-dir", type=Path, default=PROJECT_ROOT / "data")
     parser.add_argument("--discover-only", action="store_true", help="Save contracts without requesting forecasts")

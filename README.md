@@ -13,10 +13,11 @@ locations, then compares them with NOAA daily high and low observations. The
 initial pipeline covers eight U.S. locations commonly referenced by weather
 markets and runs automatically with GitHub Actions.
 
-There are now two separate datasets: the original morning research snapshots
-and Kalshi opening snapshots linked to specific contracts, reporting windows,
-and settlement sources. They must not be pooled without accounting for their
-different stations, collection times, and temperature-day definitions.
+All collectors use the Kalshi station locations in one registry,
+`config/stations.csv`. Morning forecasts and Kalshi opening snapshots remain
+separate because their collection times and temperature-day definitions differ.
+Historical O'Hare and Love Field records predate the corrected station mapping
+and must be excluded from comparisons with Midway and DFW contracts.
 
 ## Current data sources
 
@@ -60,15 +61,15 @@ they are not equivalent to native daily maxima/minima.
 
 ## Locations
 
-Station metadata lives in [`config/stations.csv`](config/stations.csv). It
+All collector station metadata lives in [`config/stations.csv`](config/stations.csv). It
 contains verified NWS coordinates and the corresponding NOAA/NCEI identifiers
 for:
 
 - New York City — Central Park
 - Los Angeles — Los Angeles International Airport
-- Chicago — O'Hare International Airport
+- Chicago — Midway International Airport
 - Miami — Miami International Airport
-- Dallas — Dallas Love Field
+- Dallas — Dallas/Fort Worth International Airport
 - Seattle — Seattle-Tacoma International Airport
 - Boston — Logan International Airport
 - San Francisco — San Francisco International Airport
@@ -78,12 +79,14 @@ Market rules can differ or change, and neither an NWS station identifier nor an
 NCEI daily summary should be assumed to be the official settlement source until
 the exact contract rules are checked.
 
-Market snapshots use [`config/market_stations.csv`](config/market_stations.csv)
-and [`config/kalshi_markets.json`](config/kalshi_markets.json). The eight cities
-are the same, but Chicago uses **Midway (KMDW / CLIMDW)** and Dallas uses
-**Dallas-Fort Worth (KDFW / CLIDFW)**, as named by the current contracts. The
-original O'Hare/Love Field research records are preserved. The market station
-file deliberately has no NCEI identifiers: it is not used for NOAA observations.
+[`config/kalshi_markets.json`](config/kalshi_markets.json) links this same registry
+to Kalshi's series and climate-report codes. Chicago uses **Midway (KMDW / CLIMDW)**
+and Dallas uses **Dallas-Fort Worth (KDFW / CLIDFW)**. Their NOAA/NCEI observation
+IDs are [USW00014819](https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND%3AUSW00014819/detail)
+and [USW00003927](https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND%3AUSW00003927/detail).
+Both workflows collect these stations going forward; the duplicate market station
+file has been removed. Earlier O'Hare/Love Field records retain their original IDs
+and are not relabeled as observations or forecasts for different airports.
 
 ## Kalshi opening snapshots
 

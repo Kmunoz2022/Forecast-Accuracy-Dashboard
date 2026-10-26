@@ -27,7 +27,7 @@ from weather_pipeline.storage import read_jsonl
 from weather_pipeline.temperatures import sampled_extrema
 from weather_pipeline.windows import standard_day, utc_text
 
-STATIONS = load_stations(ROOT / "config/market_stations.csv")
+STATIONS = load_stations(ROOT / "config/stations.csv")
 MAPPING = MarketMapping(STATIONS[0], "KXHIGHNY", "high", "CLINYC")
 OPEN = datetime(2026, 10, 25, 14, tzinfo=timezone.utc)
 SERIES = {"ticker": "KXHIGHNY", "settlement_sources": [
@@ -118,6 +118,11 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(16, len(mappings))
         self.assertEqual({"KMDW"}, {m.station.nws_station_id for m in mappings if m.climate_code == "CLIMDW"})
         self.assertEqual({"KDFW"}, {m.station.nws_station_id for m in mappings if m.climate_code == "CLIDFW"})
+        self.assertEqual({"USW00014819"}, {m.station.ncei_station_id for m in mappings if m.climate_code == "CLIMDW"})
+        self.assertEqual({"USW00003927"}, {m.station.ncei_station_id for m in mappings if m.climate_code == "CLIDFW"})
+        self.assertEqual({s.station_id for s in STATIONS}, {m.station.station_id for m in mappings})
+        self.assertNotIn("chicago_ohare", {s.station_id for s in STATIONS})
+        self.assertNotIn("dallas_love_field", {s.station_id for s in STATIONS})
 
     def test_rule_mismatches_are_recorded_and_never_scheduled(self):
         changes = [
