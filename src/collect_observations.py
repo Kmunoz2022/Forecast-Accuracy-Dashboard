@@ -19,6 +19,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect NOAA/NCEI daily station outcomes")
     parser.add_argument("--stations", type=Path, default=PROJECT_ROOT / "config/stations.csv")
     parser.add_argument("--data-dir", type=Path, default=PROJECT_ROOT / "data")
+    parser.add_argument(
+        "--save-raw", action="store_true", help="Also archive full API responses for debugging"
+    )
     parser.add_argument("--lookback-days", type=int, default=14)
     parser.add_argument("--end-date", type=date.fromisoformat)
     parser.add_argument(
@@ -47,6 +50,9 @@ def main() -> int:
     end_date = args.end_date or (retrieved_at.date() - timedelta(days=1))
     start_date = end_date - timedelta(days=args.lookback_days - 1)
     stations = [station for station in load_stations(args.stations) if station.active]
+    if not stations:
+        print("No active stations; no requests made.")
+        return 0
 
     try:
         records, payload, _ = fetch_observations(
@@ -59,12 +65,13 @@ def main() -> int:
         print(f"Observation collection failed: {exc}", file=sys.stderr)
         return 1
 
-    collection_date = retrieved_at.date().isoformat()
-    year, month, _ = collection_date.split("-")
-    write_json(
-        args.data_dir / "raw" / "ncei" / year / month / f"{collection_date}.json",
-        payload,
-    )
+    if args.save_raw:
+        collection_date = retrieved_at.date().isoformat()
+        year, month, _ = collection_date.split("-")
+        write_json(
+            args.data_dir / "raw" / "ncei" / year / month / f"{collection_date}.json",
+            payload,
+        )
 
     records_by_date: dict[str, list[dict]] = defaultdict(list)
     for record in records:

@@ -4,7 +4,7 @@ import json
 import sys
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -71,13 +71,11 @@ class PipelineTests(unittest.TestCase):
         payload = {
             "list": [
                 {
-                    "dt": int(datetime(2026, 10, 26, 6, tzinfo=timezone.utc).timestamp()),
-                    "main": {"temp_max": 52.0, "temp_min": 48.0},
-                },
-                {
-                    "dt": int(datetime(2026, 10, 26, 18, tzinfo=timezone.utc).timestamp()),
-                    "main": {"temp_max": 71.0, "temp_min": 66.0},
-                },
+                    "dt": int((datetime(2026, 10, 26, 3, tzinfo=timezone.utc)
+                               + timedelta(hours=3 * index)).timestamp()),
+                    "main": {"temp": temperature, "temp_max": 100, "temp_min": -10},
+                }
+                for index, temperature in enumerate([99, 48, 53, 60, 65, 71, 67, 59, 51, -20])
             ]
         }
         record = normalize_openweathermap(
@@ -110,9 +108,12 @@ class PipelineTests(unittest.TestCase):
         payload = {
             "timelines": {
                 "hourly": [
-                    {"time": "2026-10-26T04:00:00Z", "values": {"temperature": 47}},
-                    {"time": "2026-10-26T18:00:00Z", "values": {"temperature": 73}},
-                    {"time": "2026-10-27T04:00:00Z", "values": {"temperature": 50}},
+                    {
+                        "time": (datetime(2026, 10, 26, 4, tzinfo=timezone.utc)
+                                 + timedelta(hours=index)).isoformat(),
+                        "values": {"temperature": temperature},
+                    }
+                    for index, temperature in enumerate([47, 73] + [60] * 22 + [-20])
                 ]
             }
         }

@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 
 from weather_pipeline.config import Station
 from weather_pipeline.http import get_json
+from weather_pipeline.temperatures import sampled_extrema
 
 
 BASE_URL = "https://api.tomorrow.io/v4/weather/forecast"
@@ -36,7 +37,7 @@ def normalize_response(
     source_url: str,
 ) -> dict[str, Any]:
     target_date = retrieved_at.astimezone(ZoneInfo(station.timezone)).date() + timedelta(days=1)
-    temperatures: list[float] = []
+    samples = []
     try:
         hourly = payload["timelines"]["hourly"]
     except (KeyError, TypeError) as exc:
@@ -44,20 +45,12 @@ def normalize_response(
 
     for point in hourly:
         try:
-            local_date = _parse_timestamp(point["time"]).astimezone(
-                ZoneInfo(station.timezone)
-            ).date()
+            timestamp = _parse_timestamp(point["time"])
             temperature = point["values"]["temperature"]
         except (KeyError, TypeError, ValueError):
             continue
-        if local_date == target_date and temperature is not None:
-            temperatures.append(float(temperature))
-
-    if not temperatures:
-        raise ValueError(
-            f"Tomorrow.io returned no hourly temperatures for {target_date} "
-            f"at {station.station_id}"
-        )
+        samples.append((timestamp, temperature))
+    extrema = sampled_extrema(station, samples, retrieved_at=retrieved_at, step_hours=1)
 
     return {
         "schema_version": 1,
@@ -70,8 +63,7 @@ def normalize_response(
         "snapshot_date_utc": retrieved_at.date().isoformat(),
         "retrieved_at_utc": retrieved_at.isoformat().replace("+00:00", "Z"),
         "target_date_local": target_date.isoformat(),
-        "forecast_high_f": max(temperatures),
-        "forecast_low_f": min(temperatures),
+        **extrema,
         "source_resolution": "1h",
         "daily_boundary": "local_midnight_to_midnight",
         "aggregation_method": "max_min_of_hourly_points",

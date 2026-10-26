@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
 from weather_pipeline.config import Station
 from weather_pipeline.http import get_json
+from weather_pipeline.temperatures import sampled_extrema
 
 
 BASE_URL = "https://api.openweathermap.org/data/2.5/forecast"
@@ -34,30 +35,16 @@ def normalize_response(
     source_url: str,
 ) -> dict[str, Any]:
     target_date = retrieved_at.astimezone(ZoneInfo(station.timezone)).date() + timedelta(days=1)
-    target_points = []
+    samples = []
     for point in payload.get("list", []):
         timestamp = point.get("dt")
         if timestamp is None:
             continue
-        point_date = datetime.fromtimestamp(timestamp, tz=ZoneInfo("UTC")).astimezone(
-            ZoneInfo(station.timezone)
-        ).date()
-        if point_date == target_date:
-            target_points.append(point)
-
-    try:
-        high = max(float(point["main"]["temp_max"]) for point in target_points)
-        low = min(float(point["main"]["temp_min"]) for point in target_points)
-    except (KeyError, TypeError, ValueError) as exc:
-        raise ValueError(
-            f"OpenWeather returned no complete 3-hour forecast for {target_date} "
-            f"at {station.station_id}"
-        ) from exc
-
-    if not target_points:
-        raise ValueError(
-            f"OpenWeather returned no forecast points for {target_date} at {station.station_id}"
-        )
+        samples.append((
+            datetime.fromtimestamp(timestamp, tz=timezone.utc),
+            point.get("main", {}).get("temp"),
+        ))
+    extrema = sampled_extrema(station, samples, retrieved_at=retrieved_at, step_hours=3)
 
     return {
         "schema_version": 1,
@@ -70,11 +57,10 @@ def normalize_response(
         "snapshot_date_utc": retrieved_at.date().isoformat(),
         "retrieved_at_utc": retrieved_at.isoformat().replace("+00:00", "Z"),
         "target_date_local": target_date.isoformat(),
-        "forecast_high_f": high,
-        "forecast_low_f": low,
+        **extrema,
         "source_resolution": "3h",
         "daily_boundary": "local_midnight_to_midnight",
-        "aggregation_method": "max_min_of_3_hour_points",
+        "aggregation_method": "max_min_of_3_hour_temperature",
         "source_url": source_url,
         "attribution": ATTRIBUTION,
     }
