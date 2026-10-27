@@ -1,295 +1,154 @@
-# Forecast-Accuracy-Dashboard
+# Forecast Accuracy Dashboard
 
-Problem Statement: Accessing specific 1-day-ahead historical forecasts (what
-was predicted exactly 24 hours prior) is difficult because most services purge
-short-term forecast data shortly after it expires. But this data is valuable
-for the recent rise in weather betting in prediction markets. This project aims
-to collect, store, and analyze 1-day-ahead historical forecasts from various
-sources for various locations, making it easier to analyze and utilize this
-data for research and betting assessment purposes.
+Collect weather forecasts for the stations used by Kalshi's daily temperature
+markets, then build a history for comparing forecast accuracy. The collection
+pipeline is implemented; analysis and the dashboard are planned.
 
-This project collects next-day temperature forecasts for exact weather-station
-locations, then compares them with NOAA daily high and low observations. The
-initial pipeline covers eight U.S. locations commonly referenced by weather
-markets and runs automatically with GitHub Actions.
+The project saves forecast highs/lows, NOAA observations, and Kalshi contract
+metadata. It does not place trades or collect market prices.
 
-All collectors use the Kalshi station locations in one registry,
-`config/stations.csv`. Morning forecasts and Kalshi opening snapshots remain
-separate because their collection times and temperature-day definitions differ.
-Historical O'Hare and Love Field records predate the corrected station mapping
-and must be excluded from comparisons with Midway and DFW contracts.
+## Automatic collection
 
-## Current data sources
+Two GitHub Actions workflows share the same [station registry](config/stations.csv).
 
-- **Open-Meteo** supplies the next-local-day high and low forecast. Its weather
-  data is available under CC BY 4.0 and is stored with attribution.
-- **NWS** supplies free, keyless hourly forecasts for the configured U.S.
-  locations. The collector derives the next local day's high and low from a
-  complete set of hourly temperatures and stores the source update time.
-- **OpenWeather** is enabled automatically when `OPENWEATHERMAP_API_KEY` is
-  available. Its free five-day endpoint has three-hour resolution, so the
-  collector derives local-calendar-day extrema from those forecast points and
-  records that aggregation method with every row.
-- **NOAA/NCEI Daily Summaries** supplies observed station highs and lows. NOAA
-  reports can arrive several days late, so the collector rechecks the preceding
-  14 days and records corrections without creating duplicates.
+| Workflow | Schedule (UTC) | What it collects |
+| --- | --- | --- |
+| [Collect daily weather data](.github/workflows/collect-weather.yml) | Daily at 12:17 | Tomorrow's forecasts and the previous 14 days of NOAA observations, including corrections |
+| [Collect Kalshi opening forecasts](.github/workflows/collect-market-weather.yml) | Hourly at :07, plus 13:57 and 14:57 | Contract metadata and the first available forecast after each market opens |
 
-The pipeline intentionally does not archive Google Weather, WeatherAPI,
-AccuWeather, or free-tier Weatherbit forecasts. Their standard terms limit
-forecast retention or archival use. Add a commercial provider only after its
-license explicitly allows long-term storage and the intended redistribution.
-Open-Meteo's public endpoint is intended for non-commercial use; obtain its
-commercial API plan before using this collector in a commercial product.
+The extra market runs poll for up to five minutes. Opening times come from
+Kalshi's API; the schedule provides opportunities to check them. GitHub may delay
+runs, so every market snapshot records its actual retrieval time and opening delay.
 
-## Forecast definition
+### Enable the workflows
 
-The scheduled workflow runs at 12:17 UTC. For each station, it records the
-forecast for the next calendar day in that station's IANA timezone. This is a
-repeatable "next-day snapshot" definition; it is not a claim that each value was
-issued exactly 24 hours before the eventual daily maximum or minimum.
+1. Merge the collection code into `main`.
+2. Under **Settings > Actions > General > Workflow permissions**, allow
+   **Read and write permissions** so the workflows can commit collected data.
+3. In **Actions**, run each workflow once on `main` and check its result.
+4. Enable failure notifications. Subsequent runs are scheduled automatically.
 
-Each normalized record includes the provider, exact coordinates, station ID,
-retrieval timestamp, local target date, temperature values, source URL, and
-attribution. By default, only normalized highs/lows and their metadata are
-stored. Use `--save-raw` on either collector to also retain permitted source
-responses for debugging. Previously collected raw files remain unchanged.
+Leave **Replace an existing forecast snapshot for the current UTC day** unchecked
+for normal runs. Existing snapshots are skipped; missing ones are collected.
+Checking it replaces daily forecasts with newer predictions. Market-opening
+snapshots are immutable and have no replacement option.
 
-Sampled providers (NWS, Tomorrow.io, OpenWeather) require every expected timestamp
-in the local day before a row is saved. This includes 23-hour and 25-hour daylight
-saving days. Their sampled extrema can miss temperatures between forecast points;
-they are not equivalent to native daily maxima/minima.
+Successful records are saved even when another provider fails, and the workflow
+reports the failure. If a push is blocked, check repository permissions and branch
+rules. The market workflow schedules 26 runs per day; account for Actions minutes
+when using a private repository.
 
-## Locations
+## Providers and credentials
 
-All collector station metadata lives in [`config/stations.csv`](config/stations.csv). It
-contains verified NWS coordinates and the corresponding NOAA/NCEI identifiers
-for:
+Open-Meteo, NWS, NOAA/NCEI, and Kalshi's public market API need no keys.
 
-- New York City — Central Park
-- Los Angeles — Los Angeles International Airport
-- Chicago — Midway International Airport
-- Miami — Miami International Airport
-- Dallas — Dallas/Fort Worth International Airport
-- Seattle — Seattle-Tacoma International Airport
-- Boston — Logan International Airport
-- San Francisco — San Francisco International Airport
+| Source | Data | Configuration |
+| --- | --- | --- |
+| Open-Meteo | Daily forecasts; hourly temperatures for market windows | Enabled by default |
+| NWS | Hourly forecasts | Enabled by default |
+| NOAA/NCEI | Observed daily highs/lows | Enabled by default |
+| Kalshi | Opening times, rules, thresholds, sources, and available result fields | Enabled in the market workflow |
+| OpenWeather | Three-hour forecasts | Secret: `OPENWEATHERMAP_API_KEY` |
+| Tomorrow.io | Hourly forecasts | Secret: `TOMORROW_API_KEYS`; variable: `TOMORROW_ARCHIVAL_ALLOWED=true` |
+| Weatherbit | Daily forecasts, morning workflow only | Secret: `WEATHERBIT_API_KEY`; variable: `WEATHERBIT_ARCHIVAL_ALLOWED=true` |
 
-The `settlement_source` values are deliberately set to `verify_market_rules`.
-Market rules can differ or change, and neither an NWS station identifier nor an
-NCEI daily summary should be assumed to be the official settlement source until
-the exact contract rules are checked.
+Add secrets and variables under **Settings > Secrets and variables > Actions**,
+using the corresponding **Secrets** and **Variables** tabs. Enable archival
+variables only when your provider plan permits the intended storage. Weatherbit's
+daily aggregates cannot be shifted to the market reporting window.
 
-[`config/kalshi_markets.json`](config/kalshi_markets.json) links this same registry
-to Kalshi's series and climate-report codes. Chicago uses **Midway (KMDW / CLIMDW)**
-and Dallas uses **Dallas-Fort Worth (KDFW / CLIDFW)**. Their NOAA/NCEI observation
-IDs are [USW00014819](https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND%3AUSW00014819/detail)
-and [USW00003927](https://www.ncei.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND%3AUSW00003927/detail).
-Both workflows collect these stations going forward; the duplicate market station
-file has been removed. Earlier O'Hare/Love Field records retain their original IDs
-and are not relabeled as observations or forecasts for different airports.
+`GOOGLE_MAPS_DEMO_API_KEY` and `WEATHERAPI_API_KEY` are not used by the collectors.
+AccuWeather, Ambee, and Meteomatics are not integrated. Provider attribution and
+storage notes are in [data/README.md](data/README.md).
 
-## Kalshi opening snapshots
+## Stations
 
-`Collect Kalshi opening forecasts` runs separately from the daily research job.
-It discovers the configured 16 daily high/low series through Kalshi's public
-read-only API, including unopened contracts. No Kalshi key is required.
+[`config/stations.csv`](config/stations.csv) is the single registry for forecasts
+and NOAA observations. [`config/kalshi_markets.json`](config/kalshi_markets.json)
+maps those stations to 16 daily high/low market series.
 
-- Opening times come from each contract's `open_time`, not a hardcoded city time.
-- Contract metadata stores the market/event IDs, opening/closing timestamps,
-  threshold information, primary/secondary rules, settlement source, terms URL,
-  and a rules-version hash. Changed rules are retained as new versions.
-- Station climate codes, temperature metric, units, date, source, and closing
-  time must pass the configured checks before a forecast is scheduled. A mismatch
-  is saved for inspection and makes the run fail without hiding other successes.
-- The reporting window is midnight-to-midnight **local standard time**, always
-  24 hours. In daylight-saving time this appears as 1 AM to 1 AM. Its end must
-  match the contract's closing timestamp. This is a configured policy checked
-  against the contract, not an inference that every possible weather market uses
-  that window. Unknown formats require reviewing the mapping/validation code.
-- Open-Meteo, NWS, OpenWeather, and authorized Tomorrow.io collect hourly or
-  three-hour temperatures for this explicit window. Weatherbit's current daily
-  endpoint is skipped here because its daily aggregates cannot be shifted.
-- Identical station/date/opening combinations reuse one provider request for
-  high and low events. Each event still gets its own linked forecast record.
-- The first successful snapshot for each provider/event/opening is immutable.
-  Reruns collect only missing snapshots; there is no market `--refresh` or
-  historical `--as-of` option.
+| City | Station | NWS ID |
+| --- | --- | --- |
+| New York City | Central Park | KNYC |
+| Los Angeles | Los Angeles International Airport | KLAX |
+| Chicago | Midway Airport | KMDW |
+| Miami | Miami International Airport | KMIA |
+| Dallas | Dallas/Fort Worth International Airport | KDFW |
+| Seattle | Seattle-Tacoma International Airport | KSEA |
+| Boston | Logan International Airport | KBOS |
+| San Francisco | San Francisco International Airport | KSFO |
 
-The workflow checks at minute 7 every hour, with additional runs at 13:57 and
-14:57 UTC to cover the usual 10 AM Eastern opening in either season. Those two
-runs poll for up to five minutes. This is 26 scheduled runs per day, so private
-repositories should account for Actions minutes. Both data workflows share a
-concurrency group and rebase their data commits before pushing.
+Historical O'Hare and Love Field records retain their original station IDs.
+Exclude them from comparisons with Midway and DFW markets.
 
-GitHub can delay or drop scheduled runs. Every response records its actual
-request-start/retrieval timestamps and `seconds_after_market_open`:
+## Comparing the data
 
-| Capture status | Meaning |
+Morning snapshots target the next local calendar day, midnight to midnight with
+daylight saving. Market snapshots use an explicit 24-hour **local-standard-time**
+window, which appears as 1 AM to 1 AM during daylight saving. Keep these datasets
+separate when comparing accuracy.
+
+Before collecting a market forecast, the collector checks the contract's station
+code, date, temperature metric, units, settlement source, and closing time against
+the configured mapping and window. Mismatches are reported for review. Contract
+rules are versioned so each forecast can be traced to the rules used at collection.
+
+| Market capture status | Meaning |
 | --- | --- |
-| `near_open` | Response arrived within the configured tolerance (default 600 seconds) after opening |
-| `late` | First available response arrived later, but before the measurement day began |
-| `missed_before_measurement_start` | No snapshot exists and the measurement day has already begun; no historical forecast is fabricated |
+| `near_open` | Response arrived within 10 minutes of opening by default |
+| `late` | Response arrived later, but before the measurement day began |
+| `missed_before_measurement_start` | No snapshot was captured before the measurement day began |
 
-For opening-time comparisons, filter `eligible_for_opening_comparison=true` and
-choose a delay tolerance appropriate to the analysis. `near_open` does **not**
-mean an exact opening-second capture. Intraday forecasts and opening prices are
-not collected. For strict timing guarantees, use a continuously running external
-scheduler; changing GitHub's cron alone cannot guarantee an exact start.
+For opening-time analysis, filter `eligible_for_opening_comparison=true` and inspect
+`seconds_after_market_open`. A near-opening snapshot is not an exact opening-second
+forecast. Manual runs cannot reconstruct forecasts from a past opening.
 
-The live October 2026 contracts checked during implementation name **The Weather
-Company**, even though Kalshi's general weather help page describes NWS daily
-settlement. The collector preserves each actual contract's source and never
-labels NOAA/NCEI observations as Kalshi settlement data. It stores `result` and
-`expiration_value` when returned for recent contracts (a two-day closing-time
-lookback); these are Kalshi API fields, not a scraped official weather report.
-Long-delayed settlements require a separate historical backfill later.
+Hourly and three-hourly extrema can miss temperatures between samples. Incomplete
+sample coverage is rejected. NOAA observations are comparison data, not automatically
+the official settlement result: follow each contract's recorded source. Contracts
+checked in October 2026 named The Weather Company. Kalshi result fields are refreshed
+for recently closed contracts; long-delayed settlements need a separate backfill.
 
-References: [Kalshi market API](https://docs.kalshi.com/api-reference/market/get-markets),
-[GLOBALTEMPERATURE contract](https://assets.kalshi.com/contract_terms/GLOBALTEMPERATURE.pdf),
-[official Weather Company reports](https://weather.com/kalshi),
-[Kalshi weather help](https://help.kalshi.com/en/articles/13823837-weather-markets).
-
-After merging, open **Actions > Collect Kalshi opening forecasts > Run workflow**.
-A manual run captures current eligible events and labels late arrivals honestly;
-it cannot reconstruct the forecast that existed at a past opening.
-
-```shell
-# Inspect and save contracts without any weather requests.
-python src/collect_market_forecasts.py --discover-only
-
-# Collect missing eligible opening snapshots now.
-python src/collect_market_forecasts.py
-
-# Poll briefly near an upcoming opening (maximum 300 seconds).
-python src/collect_market_forecasts.py --wait-seconds 300
-```
+Files are stored as date-partitioned JSONL under `data/`. Full API responses are
+off by default. See [data/README.md](data/README.md) for file layout, schema notes,
+and historical calculation caveats.
 
 ## Run locally
 
-Python 3.11 or newer is recommended.
+Use Python 3.11 or newer. Collection requires only the standard library and
+`tzdata`; the larger analysis dependencies in `requirements.txt` are optional for
+this stage.
 
 ```shell
 python -m pip install "tzdata>=2025.2"
 python -m unittest discover -s tests -v
+
 python src/collect_forecasts.py
 python src/collect_observations.py
+python src/collect_market_forecasts.py
 ```
 
-The collectors use only Python's standard library apart from `tzdata`, which is
-needed on systems such as Windows that do not include the IANA timezone database.
-No API keys are needed for the default Open-Meteo, NWS, and NOAA/NCEI sources.
-Optional commercial adapters use the secrets described below.
-
-Useful options:
+Optional provider credentials must be available as environment variables locally.
+GitHub Actions secrets are available only within the workflows.
 
 ```shell
-# Re-run today's forecast snapshot and replace changed values.
-python src/collect_forecasts.py --refresh
+# Save contract metadata without requesting weather forecasts.
+python src/collect_market_forecasts.py --discover-only
 
-# Reproducible collection timestamp for testing.
-python src/collect_forecasts.py --as-of 2026-10-25T12:17:00Z
+# Poll near an upcoming opening for up to five minutes.
+python src/collect_market_forecasts.py --wait-seconds 300
 
-# Extend the NOAA correction/backfill window.
+# Extend the NOAA observation correction/backfill window.
 python src/collect_observations.py --lookback-days 30
 
-# Opt in to full response storage when debugging a fresh snapshot.
+# Also retain permitted raw responses for new daily snapshots.
 python src/collect_forecasts.py --save-raw
 python src/collect_observations.py --save-raw
 ```
 
-Generated file layout and licensing notes are documented in
-[`data/README.md`](data/README.md).
+## Extending collection
 
-## Enable GitHub Actions collection
-
-The workflow at `.github/workflows/collect-weather.yml` runs daily and can also
-be started manually from the repository's **Actions** tab. It tests the code,
-collects forecasts and observations, commits changes under `data/`, and reports a failed run if
-either collector had an error.
-
-Repeated runs skip existing provider/station snapshots before making requests.
-NOAA fetches all stations together and requests only `TMAX,TMIN`. The 14-day
-correction window is preserved. Raw response storage is off in the scheduled job.
-Authentication/access failures and exhausted rate-limit retries stop further
-requests to that provider while the other providers continue; saved successes
-are committed even if collection reports a failure. HTTP retries respect
-`Retry-After`; delays longer than 60 seconds end the request instead of retrying
-prematurely or blocking the job.
-
-After merging the workflow into the default branch:
-
-1. Open **Settings → Actions → General → Workflow permissions**.
-2. Select **Read and write permissions** and save. The workflow needs this to
-   commit collected data with `GITHUB_TOKEN`.
-3. Open **Actions → Collect daily weather data → Run workflow** once.
-4. Confirm that the run creates forecast and observation files under `data/`.
-5. Enable GitHub Actions failure notifications for the repository/account.
-
-### Optional provider configuration
-
-The workflow recognizes these existing secret names:
-
-- `OPENWEATHERMAP_API_KEY` — collected automatically.
-- `WEATHERBIT_API_KEY` — collected only when the repository variable
-  `WEATHERBIT_ARCHIVAL_ALLOWED` is set to `true`. Use this only with an active
-  paid plan whose storage terms cover the project.
-- `TOMORROW_API_KEYS` — collected only when the repository variable
-  `TOMORROW_ARCHIVAL_ALLOWED` is set to `true`, after written retention rights
-  are confirmed.
-
-Create repository variables under **Settings → Secrets and variables → Actions →
-Variables**. `GOOGLE_MAPS_DEMO_API_KEY` and `WEATHERAPI_API_KEY` are intentionally
-not passed into the collection process because their standard forecast terms
-limit retention to 24 hours.
-
-This GitHub repository was public when the provider integration was developed.
-If the project is intended to remain private, change its visibility under
-**Settings → General → Danger Zone → Change repository visibility** before
-enabling any licensed provider. Repository visibility does not alter a
-provider's retention or redistribution terms.
-
-If branch protection prevents the bot from pushing to the default branch, either
-allow GitHub Actions to bypass that rule for this workflow or change the storage
-step to write to an external object store/database.
-
-## Data caveats
-
-- NOAA Daily Summaries are suitable for research comparisons but must be checked
-  against each market's named settlement report and rounding rules.
-- Provider grid coordinates can differ slightly from the requested station point;
-  Open-Meteo grid coordinates are retained when returned. Other providers retain
-  requested station coordinates and source URLs; these are gridded forecasts,
-  not measurements at the station.
-- OpenWeather now aggregates `main.temp` samples. Its `temp_min`/`temp_max` fields
-  describe spatial variation at a forecast time, not daily extrema. New rows use
-  `aggregation_method=max_min_of_3_hour_temperature`; any earlier rows labeled
-  `max_min_of_3_hour_points` used the old calculation and should be analyzed
-  separately. Historical snapshots are not rewritten with today's forecasts.
-- Scheduled GitHub workflows can be delayed. A manual trigger is included for
-  recovery, and forecast writes are idempotent by provider, station, target date,
-  and UTC snapshot date.
-- This repository is for research and evaluation, not financial advice.
-
-## Adding another provider
-
-Free sources worth considering next:
-
-| Source | What it adds | Setup |
-| --- | --- | --- |
-| [NWS](https://www.weather.gov/documentation/services-web-api) | U.S. hourly forecasts, aggregated to local-day highs/lows | Implemented and enabled; no key |
-| [Open-Meteo model selection](https://open-meteo.com/en/docs) | Separate GFS, ECMWF, and ICON model forecasts instead of only the default best-match result | No key for the free non-commercial tier; store each model separately |
-| [MET Norway Locationforecast](https://api.met.no/weatherapi/locationforecast/2.0/documentation) | Global temperature forecasts from another service | Free; identifying User-Agent and attribution required |
-
-Open-Meteo's [free tier](https://open-meteo.com/en/pricing) allows up to 10,000 calls
-per day for non-commercial use, with additional minute/hour/month limits.
-Model-specific forecasts through Open-Meteo are additional model comparisons,
-not independent API providers. Models shared by multiple services can produce
-correlated predictions. MET Norway and explicit Open-Meteo model selection are
-recommendations, not yet wired into this collector.
-
-Create an adapter under `src/weather_pipeline/providers/` that returns the same
-normalized forecast fields, add fixture-based tests, and call it from the
-forecast collector. Before enabling archival collection, document the provider's
-retention, attribution, redistribution, and commercial-use terms. Store any API
-key as a GitHub Actions repository or environment secret—never in `.env`, source
-code, workflow YAML, logs, or committed data.
+Add provider adapters under [`src/weather_pipeline/providers/`](src/weather_pipeline/providers/),
+register them in `configured_providers`, and test normalization and reporting-window
+coverage. Preserve source attribution, confirm archival rights, and keep API keys
+out of committed files and logs.
