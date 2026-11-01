@@ -155,6 +155,23 @@ class DiscoveryTests(unittest.TestCase):
             self.assertEqual(2, len(rows))
             self.assertIn("yes", [r["result"] for r in rows])
 
+    def test_dst_fallback_allows_second_1am_close(self):
+        chicago = next(station for station in STATIONS if station.station_id == "chicago_midway")
+        mapping = replace(MAPPING, station=chicago, series="KXHIGHCHI", climate_code="CLIMDW")
+        contract = normalize_contract(mapping, {
+            "ticker": "KXHIGHCHI-26NOV01-T71",
+            "event_ticker": "KXHIGHCHI-26NOV01",
+            "open_time": "2026-10-31T14:00:00Z",
+            "close_time": "2026-11-02T07:00:00Z",
+            "rules_primary": ("If the maximum temperature recorded at Chicago (CLIMDW) for Nov 1, 2026, "
+                              "is greater than 71 degrees fahrenheit according to The Weather Company, "
+                              "then the market resolves to Yes."),
+            "rules_secondary": "Use the final source value.",
+            "status": "active",
+        }, SERIES, OPEN)
+        self.assertNotIn("close_time_does_not_match_configured_standard_day",
+                         contract["validation_errors"])
+
     def test_pagination_includes_unopened_markets_and_detects_loops(self):
         fetch = Mock(side_effect=[{"markets": [market()], "cursor": "next"},
                                   {"markets": [{**market(), "ticker": "second"}], "cursor": ""}])

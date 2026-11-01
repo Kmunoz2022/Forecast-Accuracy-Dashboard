@@ -10,6 +10,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Callable
 from urllib.parse import urlencode
+from zoneinfo import ZoneInfo
 
 from weather_pipeline.config import Station
 from weather_pipeline.http import get_json
@@ -129,7 +130,15 @@ def normalize_contract(mapping: MarketMapping, market: dict, series: dict, now: 
     sources = series.get("settlement_sources", [])
     if not any(item.get("name", "").strip() == source for item in sources):
         errors.append("series_and_contract_source_disagree")
-    if closes != window.end:
+    allowed_closes = {window.end}
+    start_offset = datetime.combine(target, datetime.min.time(),
+                                    ZoneInfo(mapping.station.timezone)).utcoffset()
+    end_offset = datetime.combine(target + timedelta(days=1), datetime.min.time(),
+                                  ZoneInfo(mapping.station.timezone)).utcoffset()
+    if start_offset and end_offset and end_offset < start_offset:
+        # On DST fall-back days, Kalshi may close at the second 1 AM local.
+        allowed_closes.add(window.end + (start_offset - end_offset))
+    if closes not in allowed_closes:
         errors.append("close_time_does_not_match_configured_standard_day")
     if opens >= window.start:
         errors.append("market_does_not_open_before_measurement_day")
