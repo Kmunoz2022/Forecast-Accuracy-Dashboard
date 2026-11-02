@@ -172,6 +172,26 @@ class DiscoveryTests(unittest.TestCase):
         self.assertNotIn("close_time_does_not_match_configured_standard_day",
                          contract["validation_errors"])
 
+    def test_close_times_used_by_kalshi_across_seasons_are_accepted(self):
+        chicago = next(station for station in STATIONS if station.station_id == "chicago_midway")
+        mapping = replace(MAPPING, station=chicago, series="KXHIGHCHI", climate_code="CLIMDW")
+        # 1 AM CST after DST ends, and the earlier "11:59 PM ET" rule (10:59 PM CST).
+        for day, opens, closes in (("Nov 3", "2026-11-02T15:00:00Z", "2026-11-04T07:00:00Z"),
+                                   ("Feb 10", "2026-02-09T15:00:00Z", "2026-02-11T05:59:00Z")):
+            month, number = day.split()
+            ticker = f"KXHIGHCHI-26{month.upper()}{int(number):02d}"
+            year = "2026"
+            with self.subTest(day=day):
+                contract = normalize_contract(mapping, {
+                    "ticker": f"{ticker}-T71", "event_ticker": ticker,
+                    "open_time": opens, "close_time": closes,
+                    "rules_primary": (f"If the maximum temperature recorded at Chicago (CLIMDW) for "
+                                      f"{month} {int(number)}, {year}, is greater than 71 degrees fahrenheit "
+                                      "according to The Weather Company, then the market resolves to Yes."),
+                    "rules_secondary": "Use the final source value.", "status": "active",
+                }, SERIES, OPEN)
+                self.assertEqual([], contract["validation_errors"])
+
     def test_pagination_includes_unopened_markets_and_detects_loops(self):
         fetch = Mock(side_effect=[{"markets": [market()], "cursor": "next"},
                                   {"markets": [{**market(), "ticker": "second"}], "cursor": ""}])
