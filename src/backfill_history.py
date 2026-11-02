@@ -31,7 +31,10 @@ from weather_pipeline.windows import standard_day
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ("open_meteo", "mos", "ncei", "kalshi")
 OPEN_METEO_URL = "https://previous-runs-api.open-meteo.com/v1/forecast"
-OPEN_METEO_MODELS = ("gfs_seamless", "icon_seamless", "gem_seamless", "ecmwf_ifs025")
+# Explicit single models, not "*_seamless" blends: gfs_seamless silently switched
+# from GFS to HRRR in 2024, which would mix two forecasters under one column.
+OPEN_METEO_MODELS = {"gfs_global": "gfs", "ncep_hrrr_conus": "hrrr", "icon_global": "icon",
+                     "gem_global": "gem", "ecmwf_ifs025": "ecmwf"}
 # previous_day1: each hour forecast ~24h ahead; previous_day2: ~48h ahead.
 OPEN_METEO_LEADS = ("previous_day1", "previous_day2")
 MOS_URL = "https://mesonet.agron.iastate.edu/cgi-bin/request/mos.py"
@@ -95,11 +98,11 @@ def open_meteo_rows(station: Station, start: date, end: date) -> list[dict]:
         window = standard_day(target, station.timezone)
         hours = [(window.start + timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M") for h in range(24)]
         row = {"station_id": station.station_id, "date": target.isoformat()}
-        for model in OPEN_METEO_MODELS:
+        for model, short in OPEN_METEO_MODELS.items():
             for lead in OPEN_METEO_LEADS:
                 series = hourly.get(f"temperature_2m_{lead}_{model}", [])
                 values = [series[index[h]] if h in index else None for h in hours]
-                name = f"{model.split('_')[0]}_{lead.replace('previous_', '')}"
+                name = f"{short}_{lead.replace('previous_', '')}"
                 row[f"{name}_high_f"], row[f"{name}_low_f"] = extrema(values)
         rows.append(row)
     return rows
@@ -140,8 +143,8 @@ def ncei_rows(station: Station, start: date, end: date) -> list[dict]:
 
 SOURCE_FIELDS = {
     "open_meteo": ["station_id", "date"] + [
-        f"{model.split('_')[0]}_{lead.replace('previous_', '')}_{metric}_f"
-        for model in OPEN_METEO_MODELS for lead in OPEN_METEO_LEADS for metric in ("high", "low")],
+        f"{short}_{lead.replace('previous_', '')}_{metric}_f"
+        for short in OPEN_METEO_MODELS.values() for lead in OPEN_METEO_LEADS for metric in ("high", "low")],
     "mos": ["station_id", "date", "mos_high_f", "mos_low_f"],
     "ncei": ["station_id", "date", "obs_high_f", "obs_low_f"],
 }
