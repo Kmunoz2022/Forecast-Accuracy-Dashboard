@@ -153,7 +153,7 @@ Live collection began in October 2026, which is too short for model training.
 
 | Source | Data | Coverage |
 | --- | --- | --- |
-| Open-Meteo Previous Runs API | GFS, ICON, GEM, ECMWF forecasts made ~24h (`day1`) and ~48h (`day2`) ahead | GFS 2023+, others 2024+ |
+| Open-Meteo Previous Runs API | GFS, HRRR, ICON, GEM, ECMWF forecasts made ~24h (`day1`) and ~48h (`day2`; not HRRR) ahead | GFS 2023+, others 2024+ |
 | Iowa Environmental Mesonet | NWS GFS MOS guidance, 12Z run on the previous day | 2023+ |
 | NOAA/NCEI | Observed daily highs/lows | 2023+ |
 | Kalshi (live and `/historical` endpoints) | Settled brackets, results, and settled values | Varies by series |
@@ -169,6 +169,31 @@ python src/backfill_history.py            # all sources; re-run to retry failure
 python src/backfill_history.py --sources kalshi
 python src/build_dataset.py
 ```
+
+## Models and evaluation
+
+[`src/forecast_model/`](src/forecast_model/) combines the six forecasts with machine
+learning and evaluates the result:
+
+| Module | Purpose |
+| --- | --- |
+| `data.py` | Loads `dataset.csv`; fixed time split (train to Jun 2025, validate Jul–Dec 2025, test 2026) |
+| `features.py` | Ensemble mean/median/spread, trailing 7/30-day bias per source, bias-corrected forecasts, season, persistence |
+| `models.py` | Ridge regression and gradient boosting, tuned on validation, refit, then scored on test once |
+| `evaluation.py` | Baselines (each source, averages, persistence, climatology) and the error table |
+| `markets.py` | Bracket probabilities from forecasts; scoring against Kalshi prices, paper trading, market/model blend |
+| `plots.py` | Report figures |
+
+Features only use information available before the target day; a test enforces it.
+Kalshi prices are downloaded separately, at the start of each measured day:
+
+```shell
+python -m pip install pandas numpy scikit-learn matplotlib
+python src/backfill_prices.py --series KXHIGHNY KXHIGHCHI --start 2026-01-01
+python src/evaluate_models.py   # writes outputs/metrics.json and outputs/figures/
+```
+
+`outputs/` is generated and not committed; re-run the script to recreate it.
 
 ## Extending collection
 
