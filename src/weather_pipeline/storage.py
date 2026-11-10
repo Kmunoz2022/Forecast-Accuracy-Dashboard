@@ -5,17 +5,46 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
-def read_jsonl(path: Path) -> list[dict[str, Any]]:
+def _read_text(path: Path, encryption_key: str | None) -> str:
+    if path.suffix == ".enc":
+        from weather_pipeline.encryption import decrypt
+
+        if not encryption_key:
+            raise ValueError("An encryption key is required to read this archive")
+        return decrypt(path.read_bytes(), encryption_key)
+    if encryption_key is not None:
+        raise ValueError("Encrypted archives must use the .enc extension")
+    return path.read_text(encoding="utf-8")
+
+
+def _write_text(path: Path, rendered: str, encryption_key: str | None) -> None:
+    if path.suffix == ".enc":
+        from weather_pipeline.encryption import encrypt
+
+        if not encryption_key:
+            raise ValueError("An encryption key is required to write this archive")
+        content = encrypt(rendered, encryption_key)
+    else:
+        if encryption_key is not None:
+            raise ValueError("Encrypted archives must use the .enc extension")
+        content = rendered.encode("utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    # The temporary file also contains only ciphertext for encrypted archives.
+    temporary_path.write_bytes(content)
+    temporary_path.replace(path)
+
+
+def read_jsonl(path: Path, *, encryption_key: str | None = None) -> list[dict[str, Any]]:
     if not path.exists():
         return []
     rows: list[dict[str, Any]] = []
-    with path.open(encoding="utf-8") as handle:
-        for line_number, line in enumerate(handle, start=1):
-            if line.strip():
-                try:
-                    rows.append(json.loads(line))
-                except json.JSONDecodeError as exc:
-                    raise ValueError(f"Invalid JSON in {path}:{line_number}") from exc
+    for line_number, line in enumerate(_read_text(path, encryption_key).splitlines(), start=1):
+        if line.strip():
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"Invalid JSON in {path}:{line_number}") from exc
     return rows
 
 
@@ -33,8 +62,9 @@ def upsert_jsonl(
     key_fields: tuple[str, ...],
     replace: bool = False,
     ignore_compare_fields: frozenset[str] = frozenset(),
+    encryption_key: str | None = None,
 ) -> int:
-    existing = read_jsonl(path)
+    existing = read_jsonl(path, encryption_key=encryption_key)
     rows_by_key = {_key(row, key_fields): row for row in existing}
     changes = 0
 
@@ -59,22 +89,15 @@ def upsert_jsonl(
             changes += 1
 
     if changes:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        temporary_path = path.with_suffix(path.suffix + ".tmp")
         ordered_rows = [rows_by_key[key] for key in sorted(rows_by_key)]
-        with temporary_path.open("w", encoding="utf-8", newline="\n") as handle:
-            for row in ordered_rows:
-                handle.write(json.dumps(row, sort_keys=True, separators=(",", ":")))
-                handle.write("\n")
-        temporary_path.replace(path)
+        rendered = "".join(json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+                           for row in ordered_rows)
+        _write_text(path, rendered, encryption_key)
     return changes
 
 
-def write_json(path: Path, value: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+def write_json(path: Path, value: Any, *, encryption_key: str | None = None) -> None:
     rendered = json.dumps(value, indent=2, sort_keys=True) + "\n"
-    if path.exists() and path.read_text(encoding="utf-8") == rendered:
+    if path.exists() and _read_text(path, encryption_key) == rendered:
         return
-    temporary_path = path.with_suffix(path.suffix + ".tmp")
-    temporary_path.write_text(rendered, encoding="utf-8", newline="\n")
-    temporary_path.replace(path)
+    _write_text(path, rendered, encryption_key)

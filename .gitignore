@@ -211,6 +211,11 @@ tempCodeRunnerFile.py
 *.json.tmp
 *.jsonl.tmp
 *.csv.tmp
+*.enc.tmp
+
+# Private decrypted provider exports
+data/private/
+**/private/visual_crossing/
 
 # Ruff stuff:
 .ruff_cache/

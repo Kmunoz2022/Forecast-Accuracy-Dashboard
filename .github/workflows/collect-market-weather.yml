@@ -26,14 +26,16 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Install timezone data
-        run: python -m pip install "tzdata>=2025.2"
+      - name: Install collection dependencies
+        run: python -m pip install -r requirements-collection.txt
       - name: Test
         run: python -m unittest discover -s tests -v
       - name: Discover markets and capture opening forecasts
         id: collect
         continue-on-error: true
         env:
+          PIRATE_WEATHER_API_KEY: ${{ secrets.PIRATE_WEATHER_API_KEY }}
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
           OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
           TOMORROW_API_KEYS: ${{ secrets.TOMORROW_API_KEYS }}
           TOMORROW_ARCHIVAL_ALLOWED: ${{ vars.TOMORROW_ARCHIVAL_ALLOWED }}

@@ -255,6 +255,28 @@ class CaptureTests(unittest.TestCase):
         self.collect([self.event, later])
         self.assertEqual(2, self.fetch.call_count)
 
+    def test_encrypted_provider_reuses_snapshots_without_publishing_temperatures(self):
+        secret = "test-archive-secret"
+        self.fetch.return_value = ({
+            "provider": "visual_crossing", "forecast_high_f": 71.25,
+            **self.event.window.metadata(),
+        }, {}, "test")
+        provider = EnabledProvider("visual_crossing", self.fetch, archive_key=secret)
+        self.factory = lambda now, window: [provider]
+        low = event(replace(MAPPING, series="KXLOWTNYC", metric="low"))
+        self.assertEqual([], self.collect([self.event, low]))
+        self.assertEqual([], self.collect([self.event, low]))
+        self.assertEqual(1, self.fetch.call_count)
+        self.assertEqual([], self.rows())
+        encrypted = provider.output_path(dated_path(self.root, "market_forecasts", "2026-10-26"))
+        rows = read_jsonl(encrypted, encryption_key=secret)
+        self.assertEqual(2, len(rows))
+        self.assertTrue(all(row["eligible_for_opening_comparison"] for row in rows))
+        for path in self.root.rglob("*"):
+            if path.is_file():
+                self.assertNotIn(b"forecast_high_f", path.read_bytes())
+                self.assertNotIn(secret.encode(), path.read_bytes())
+
     def test_late_request_uses_response_time_and_is_not_backdated(self):
         def fetch(station):
             self.clock.value += timedelta(minutes=15)

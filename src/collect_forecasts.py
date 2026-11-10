@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -14,7 +14,9 @@ from weather_pipeline.http import RequestError
 from weather_pipeline.providers.nws import fetch_forecast as fetch_nws
 from weather_pipeline.providers.open_meteo import fetch_forecast as fetch_open_meteo
 from weather_pipeline.providers.openweathermap import fetch_forecast as fetch_openweathermap
+from weather_pipeline.providers.pirate_weather import fetch_forecast as fetch_pirate_weather
 from weather_pipeline.providers.tomorrow_io import fetch_forecast as fetch_tomorrow_io
+from weather_pipeline.providers.visual_crossing import fetch_forecast as fetch_visual_crossing
 from weather_pipeline.providers.weatherbit import fetch_forecast as fetch_weatherbit
 from weather_pipeline.storage import read_jsonl, upsert_jsonl, write_json
 from weather_pipeline.windows import ForecastWindow
@@ -28,6 +30,12 @@ KEY_FIELDS = ("provider", "station_id", "target_date_local", "snapshot_date_utc"
 class EnabledProvider:
     slug: str
     fetch: Callable[[Station], tuple[dict[str, Any], dict[str, Any], str]]
+    archive_key: str | None = field(default=None, repr=False)
+
+    def output_path(self, path: Path) -> Path:
+        if self.archive_key is not None:
+            return path.with_name(f"{path.name}.{self.slug}.enc")
+        return path
 
 
 def parse_args() -> argparse.Namespace:
@@ -96,6 +104,29 @@ def configured_providers(
     else:
         announce("OPENWEATHERMAP_API_KEY is not set; skipping OpenWeather")
 
+    pirate_key = os.getenv("PIRATE_WEATHER_API_KEY")
+    if pirate_key:
+        providers.append(EnabledProvider(
+            slug="pirate_weather",
+            fetch=lambda station: fetch_pirate_weather(
+                station, retrieved_at=retrieved_at, api_key=pirate_key, window=window,
+            ),
+        ))
+    else:
+        announce("PIRATE_WEATHER_API_KEY is not set; skipping Pirate Weather")
+
+    visual_crossing_key = os.getenv("VISUALCROSSING_API_KEY")
+    if visual_crossing_key:
+        providers.append(EnabledProvider(
+            slug="visual_crossing",
+            fetch=lambda station: fetch_visual_crossing(
+                station, retrieved_at=retrieved_at, api_key=visual_crossing_key, window=window,
+            ),
+            archive_key=visual_crossing_key,
+        ))
+    else:
+        announce("VISUALCROSSING_API_KEY is not set; skipping Visual Crossing")
+
     weatherbit_key = os.getenv("WEATHERBIT_API_KEY")
     if window is not None and weatherbit_key:
         announce("Weatherbit daily aggregates cannot reproduce a standard-time window; market snapshots skip it.")
@@ -154,11 +185,7 @@ def main() -> int:
     snapshot_date = retrieved_at.date().isoformat()
     year, month, _ = snapshot_date.split("-")
     output_path = args.data_dir / "forecasts" / year / month / f"{snapshot_date}.jsonl"
-    existing_keys = {
-        tuple(row[field] for field in KEY_FIELDS) for row in read_jsonl(output_path)
-    }
-
-    records = []
+    changes = 0
     failures: list[str] = []
     targets = {
         station.station_id: (
@@ -167,6 +194,16 @@ def main() -> int:
         for station in stations
     }
     for provider in providers:
+        provider_path = provider.output_path(output_path)
+        try:
+            existing_keys = {
+                tuple(row[field] for field in KEY_FIELDS)
+                for row in read_jsonl(provider_path, encryption_key=provider.archive_key)
+            }
+        except Exception as exc:
+            failures.append(f"{provider.slug}/archive: {exc}")
+            continue
+        records = []
         for station in stations:
             local_target = targets[station.station_id]
             expected_key = (provider.slug, station.station_id, local_target, snapshot_date)
@@ -188,7 +225,8 @@ def main() -> int:
                         / snapshot_date
                         / f"{station.station_id}.json"
                     )
-                    write_json(raw_path, payload)
+                    write_json(provider.output_path(raw_path), payload,
+                               encryption_key=provider.archive_key)
                 records.append(record)
                 print(
                     f"Collected {provider.slug} {station.station_id} forecast "
@@ -200,13 +238,17 @@ def main() -> int:
                     print(f"Stopping {provider.slug}: authentication/access/quota error; see failure report.")
                     break
 
-    changes = upsert_jsonl(
-        output_path,
-        records,
-        key_fields=KEY_FIELDS,
-        replace=args.refresh,
-        ignore_compare_fields=frozenset({"retrieved_at_utc"}),
-    )
+        try:
+            changes += upsert_jsonl(
+                provider_path,
+                records,
+                key_fields=KEY_FIELDS,
+                replace=args.refresh,
+                ignore_compare_fields=frozenset({"retrieved_at_utc"}),
+                encryption_key=provider.archive_key,
+            )
+        except Exception as exc:
+            failures.append(f"{provider.slug}/archive: {exc}")
     print(f"Forecast rows changed: {changes}")
     if failures:
         print("Forecast collection failures:", file=sys.stderr)

@@ -49,6 +49,8 @@ Open-Meteo, NWS, NOAA/NCEI, and Kalshi's public market API need no keys.
 | NOAA/NCEI | Observed daily highs/lows | Enabled by default |
 | Kalshi | Opening times, rules, thresholds, sources, and available result fields | Enabled in the market workflow |
 | OpenWeather | Three-hour forecasts | Secret: `OPENWEATHERMAP_API_KEY` |
+| Pirate Weather | Live hourly forecasts in both workflows | Secret: `PIRATE_WEATHER_API_KEY` |
+| Visual Crossing | Live hourly forecasts in both workflows; encrypted storage | Secret: `VISUALCROSSING_API_KEY` |
 | Tomorrow.io | Hourly forecasts | Secret: `TOMORROW_API_KEYS`; variable: `TOMORROW_ARCHIVAL_ALLOWED=true` |
 | Weatherbit | Daily forecasts, morning workflow only | Secret: `WEATHERBIT_API_KEY`; variable: `WEATHERBIT_ARCHIVAL_ALLOWED=true` |
 
@@ -60,6 +62,20 @@ daily aggregates cannot be shifted to the market reporting window.
 `GOOGLE_MAPS_DEMO_API_KEY` and `WEATHERAPI_API_KEY` are not used by the collectors.
 AccuWeather, Ambee, and Meteomatics are not integrated. Provider attribution and
 storage notes are in [data/README.md](data/README.md).
+
+Pirate Weather and Visual Crossing collect only fresh forecasts for the configured
+stations and comparison windows. They do not request past weather, reanalysis,
+historical forecasts, or paid historical add-ons. The NOAA observation lookback
+remains relevant: it supplies actual temperatures and corrections for scoring the
+forecasts already collected. Add historical data only when its issue time, station,
+and reporting window make it usable for this project's accuracy evaluation.
+
+Visual Crossing archives are encrypted with `VISUALCROSSING_API_KEY` because this
+repository is public. No additional secret or repository variable is required.
+**Preserve the original key securely before rotating it:** it is needed to read
+files encrypted with that key, even after the API credential is revoked. Keys and
+decrypted exports must stay out of Git. Pirate Weather snapshots use the ordinary
+JSONL files. Neither provider's credentials are included in saved source URLs.
 
 ## Stations
 
@@ -115,12 +131,12 @@ and historical calculation caveats.
 
 ## Run locally
 
-Use Python 3.11 or newer. Collection requires only the standard library and
-`tzdata`; the larger analysis dependencies in `requirements.txt` are optional for
-this stage.
+Use Python 3.11 or newer. Collection uses `tzdata` and `cryptography` (for encrypted
+provider archives); the larger analysis dependencies in `requirements.txt` are
+optional for this stage.
 
 ```shell
-python -m pip install "tzdata>=2025.2"
+python -m pip install -r requirements-collection.txt
 python -m unittest discover -s tests -v
 
 python src/collect_forecasts.py
@@ -130,6 +146,18 @@ python src/collect_market_forecasts.py
 
 Optional provider credentials must be available as environment variables locally.
 GitHub Actions secrets are available only within the workflows.
+
+With `VISUALCROSSING_API_KEY` exported locally, decrypt saved forecasts for analysis:
+
+```shell
+python src/export_private_forecasts.py
+```
+
+This makes no API calls. It writes JSONL under the gitignored
+`data/private/visual_crossing/` directory, preserving separate `forecasts/` and
+`market_forecasts/` datasets. The historical model-training dataset is not
+automatically extended with these new live providers; compare them once matching
+outcomes are available. A missing or wrong decryption key never overwrites an archive.
 
 ```shell
 # Save contract metadata without requesting weather forecasts.

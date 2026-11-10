@@ -30,3 +30,10 @@ def standard_day(target: date, zone_name: str) -> ForecastWindow:
     standard_offset = local.utcoffset() - local.dst()
     start = datetime.combine(target, time.min, timezone(standard_offset)).astimezone(timezone.utc)
     return ForecastWindow(target, start, start + timedelta(days=1))
+
+
+def local_day(target: date, zone_name: str) -> ForecastWindow:
+    zone = ZoneInfo(zone_name)
+    start = datetime.combine(target, time.min, zone).astimezone(timezone.utc)
+    end = datetime.combine(target + timedelta(days=1), time.min, zone).astimezone(timezone.utc)
+    return ForecastWindow(target, start, end, "local_midnight_to_midnight")

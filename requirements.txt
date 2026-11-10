@@ -6,4 +6,4 @@ matplotlib
 seaborn
 jupyter
 pyarrow
-tzdata>=2025.2
+-r requirements-collection.txt

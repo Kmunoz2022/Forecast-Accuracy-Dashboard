@@ -58,11 +58,18 @@ def collect_events(
             continue
         station = event.mapping.station
         target = event.window.target_date.isoformat()
-        output = dated_path(root, "market_forecasts", target)
-        if output not in known:
-            known[output] = {tuple(row[k] for k in FORECAST_KEYS) for row in read_jsonl(output)}
         providers = provider_factory(now, event.window)
         for provider in providers:
+            output = provider.output_path(dated_path(root, "market_forecasts", target))
+            if output not in known:
+                try:
+                    known[output] = {
+                        tuple(row[k] for k in FORECAST_KEYS)
+                        for row in read_jsonl(output, encryption_key=provider.archive_key)
+                    }
+                except Exception as exc:
+                    failures.append(f"{event.ticker}/{provider.slug}/archive: {exc}")
+                    continue
             key = (provider.slug, event.ticker, utc_text(event.opens))
             if key in known[output]:
                 continue
@@ -126,11 +133,16 @@ def collect_events(
                                              for row in sorted(event.contracts, key=lambda r: r["market_ticker"])],
                         "observation_role": "forecast_only_not_official_settlement",
                     }
-                    upsert_jsonl(output, [saved], key_fields=FORECAST_KEYS)
-                    known[output].add(key)
-                    audit["status"] = saved["capture_status"]
-                    print(f"Saved {event.ticker}/{provider.slug}: {saved['capture_status']} "
-                          f"({saved['seconds_after_market_open']}s after open)")
+                    try:
+                        upsert_jsonl(output, [saved], key_fields=FORECAST_KEYS,
+                                     encryption_key=provider.archive_key)
+                        known[output].add(key)
+                        audit["status"] = saved["capture_status"]
+                        print(f"Saved {event.ticker}/{provider.slug}: {saved['capture_status']} "
+                              f"({saved['seconds_after_market_open']}s after open)")
+                    except Exception as exc:
+                        failures.append(f"{event.ticker}/{provider.slug}/archive: {exc}")
+                        audit.update(status="archive_failed", error=str(exc))
             upsert_jsonl(dated_path(root, "market_collection", target), [audit],
                          key_fields=FORECAST_KEYS, replace=True,
                          ignore_compare_fields=frozenset({"checked_at_utc"}))
