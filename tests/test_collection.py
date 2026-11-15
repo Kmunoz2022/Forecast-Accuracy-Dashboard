@@ -168,6 +168,37 @@ class CollectorTests(unittest.TestCase):
             self.assertEqual(8, success.call_count)
             self.assertEqual(8, len(read_jsonl(Path(directory) / "forecasts/2026/10/2026-10-25.jsonl")))
 
+    def test_actual_response_arrival_is_saved_and_validation_failure_logs_one_request(self):
+        for invalid in (False, True):
+            with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as directory:
+                clock = Mock(return_value=AS_OF)
+
+                def fetch(station):
+                    clock.return_value = AS_OF + timedelta(seconds=9)
+                    row, payload, url = self.successful_fetch(station)
+                    if invalid:
+                        row["target_date_local"] = "2026-10-27"
+                    return row, payload, url
+
+                providers = [collect_forecasts.EnabledProvider("test", fetch)]
+                with patch.object(sys, "argv", ["collect_forecasts", "--data-dir", directory]), \
+                        patch.object(collect_forecasts, "parse_as_of", return_value=AS_OF), \
+                        patch.object(collect_forecasts, "now_utc", clock), \
+                        patch.object(collect_forecasts, "load_stations", return_value=[STATIONS[0]]), \
+                        patch.object(collect_forecasts, "configured_providers", return_value=providers), \
+                        patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO):
+                    self.assertEqual(int(invalid), collect_forecasts.main())
+                run = json.loads(next((Path(directory) / "collection_runs").rglob("*.json")).read_text())
+                self.assertEqual(1, len(run["requests"]))
+                self.assertEqual(9, run["requests"][0]["request_seconds"])
+                self.assertEqual("invalid_response" if invalid else "response_received", run["requests"][0]["status"])
+                rows = read_jsonl(Path(directory) / "forecasts/2026/10/2026-10-25.jsonl")
+                if invalid:
+                    self.assertEqual([], rows)
+                else:
+                    self.assertEqual("2026-10-25T12:17:09Z", rows[0]["retrieved_at_utc"])
+                    self.assertEqual("2026-10-25T12:17:00Z", rows[0]["request_started_at_utc"])
+
     def test_no_active_stations_makes_no_observation_request(self):
         with patch.object(sys, "argv", ["collect_observations"]), \
                 patch.object(collect_observations, "load_stations", return_value=[]), \
@@ -181,6 +212,8 @@ class CollectorTests(unittest.TestCase):
                "target_date_local": "2026-10-24", "actual_high_f": 70, "actual_low_f": 50}
         with tempfile.TemporaryDirectory() as directory, \
                 patch.object(sys, "argv", ["collect_observations", "--data-dir", directory]), \
+                patch.object(collect_observations, "forecast_targets",
+                             return_value={("nyc_central_park", "2026-10-24")}), \
                 patch.object(collect_observations, "fetch_observations",
                              return_value=([row], [{"raw": "value"}], "test")), \
                 patch("sys.stdout", new_callable=io.StringIO):

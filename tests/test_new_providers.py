@@ -272,8 +272,9 @@ class EncryptedArchiveTests(unittest.TestCase):
             self.assertEqual(0, collect_forecasts.main())
             self.assertEqual(1, request.call_count)
             files = [p for p in Path(directory).rglob("*") if p.is_file()]
-            self.assertEqual(2, len(files))
-            self.assertTrue(all(p.suffix == ".enc" for p in files))
+            weather_files = [p for p in files if "forecasts" in p.parts or "raw" in p.parts]
+            self.assertEqual(2, len(weather_files))
+            self.assertTrue(all(p.suffix == ".enc" for p in weather_files))
             self.assertTrue(all(b"private_raw" not in p.read_bytes() for p in files))
             self.assertTrue(all(b"forecast_high_f" not in p.read_bytes() for p in files))
             path = provider.output_path(Path(directory) / "forecasts/2026/10/2026-10-25.jsonl")

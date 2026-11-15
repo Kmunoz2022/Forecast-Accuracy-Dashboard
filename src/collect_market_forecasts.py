@@ -17,6 +17,7 @@ from weather_pipeline.config import load_stations
 from weather_pipeline.http import RequestError
 from weather_pipeline.kalshi import KalshiClient, MarketEvent, discover, load_mappings
 from weather_pipeline.storage import read_jsonl, upsert_jsonl
+from weather_pipeline.telemetry import RunLog, failure_reason
 from weather_pipeline.windows import utc_text
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +46,7 @@ def save_contracts(root: Path, records: list[dict]) -> None:
 def collect_events(
     events: list[MarketEvent], root: Path, *, clock: Callable = now_utc,
     provider_factory: Callable = partial(configured_providers, quiet=True), near_open_seconds: int = 600,
+    run_log: RunLog | None = None,
 ) -> list[str]:
     failures = []
     # Per-run cache: matching high/low events reuse one weather request, but different
@@ -59,6 +61,10 @@ def collect_events(
         station = event.mapping.station
         target = event.window.target_date.isoformat()
         providers = provider_factory(now, event.window)
+        if run_log:
+            run_log.expect([{"provider": p.slug, "station_id": station.station_id,
+                             "event_ticker": event.ticker, "target_date_local": target,
+                             "market_open_time_utc": utc_text(event.opens)} for p in providers])
         for provider in providers:
             output = provider.output_path(dated_path(root, "market_forecasts", target))
             if output not in known:
@@ -68,7 +74,7 @@ def collect_events(
                         for row in read_jsonl(output, encryption_key=provider.archive_key)
                     }
                 except Exception as exc:
-                    failures.append(f"{event.ticker}/{provider.slug}/archive: {exc}")
+                    failures.append(f"{event.ticker}/{provider.slug}/archive: {failure_reason(exc)}")
                     continue
             key = (provider.slug, event.ticker, utc_text(event.opens))
             if key in known[output]:
@@ -95,6 +101,8 @@ def collect_events(
                                      if p.slug == provider.slug)
                         record, _, _ = fresh.fetch(station)
                         finished = clock()
+                        if run_log:
+                            record["collection_run"] = run_log.path.name
                         if finished >= event.window.start:
                             raise ValueError("Forecast response arrived after the measurement day began")
                         for field, expected in event.window.metadata().items():
@@ -112,14 +120,22 @@ def collect_events(
                             "eligible_for_opening_comparison": 0 <= delay <= near_open_seconds,
                         })
                         cache[cache_key] = (record, None)
+                        if run_log:
+                            run_log.request({"provider": provider.slug, "station_id": station.station_id,
+                                             "event_ticker": event.ticker, "target_date_local": target,
+                                             "market_open_time_utc": utc_text(event.opens)}, started, finished)
                     except Exception as exc:
-                        cache[cache_key] = (None, str(exc))
-                        failures.append(f"{event.ticker}/{provider.slug}: {exc}")
+                        if run_log:
+                            run_log.request({"provider": provider.slug, "station_id": station.station_id,
+                                             "event_ticker": event.ticker, "target_date_local": target,
+                                             "market_open_time_utc": utc_text(event.opens)}, started, clock(), exc)
+                        cache[cache_key] = (None, failure_reason(exc))
+                        failures.append(f"{event.ticker}/{provider.slug}: {failure_reason(exc)}")
                         if isinstance(exc, RequestError) and exc.status_code in {401, 403, 429}:
                             stopped_providers.add(provider.slug)
                 record, error = cache[cache_key]
                 if error:
-                    audit.update(status="request_failed", error=error)
+                    audit.update(status="request_failed", reason=error)
                 else:
                     saved = {
                         **record, "event_ticker": event.ticker,
@@ -141,8 +157,8 @@ def collect_events(
                         print(f"Saved {event.ticker}/{provider.slug}: {saved['capture_status']} "
                               f"({saved['seconds_after_market_open']}s after open)")
                     except Exception as exc:
-                        failures.append(f"{event.ticker}/{provider.slug}/archive: {exc}")
-                        audit.update(status="archive_failed", error=str(exc))
+                        failures.append(f"{event.ticker}/{provider.slug}/archive: {failure_reason(exc)}")
+                        audit.update(status="archive_failed", reason=failure_reason(exc))
             upsert_jsonl(dated_path(root, "market_collection", target), [audit],
                          key_fields=FORECAST_KEYS, replace=True,
                          ignore_compare_fields=frozenset({"checked_at_utc"}))
@@ -171,12 +187,19 @@ def main() -> int:
     client = KalshiClient()
     deadline = time.monotonic() + args.wait_seconds
     failures = []
+    run = RunLog(args.data_dir, "market")
     while True:
+        discovery_started = now_utc()
         events, contracts, discovery_failures = discover(client, mappings, now_utc())
+        run.data["discovery"].append({"started_at_utc": utc_text(discovery_started),
+                                      "finished_at_utc": utc_text(now_utc()),
+                                      "events": len(events), "failure_count": len(discovery_failures)})
+        run.save()
         save_contracts(args.data_dir, contracts)
         failures.extend(discovery_failures)
         if not args.discover_only:
-            failures.extend(collect_events(events, args.data_dir, near_open_seconds=args.near_open_seconds))
+            failures.extend(collect_events(events, args.data_dir, near_open_seconds=args.near_open_seconds,
+                                           run_log=run))
         print(f"Discovered {len(events)} validated events / {len(contracts)} contracts")
         remaining = deadline - time.monotonic()
         if args.discover_only or remaining <= 0:
@@ -186,6 +209,7 @@ def main() -> int:
         future = [(event.opens - now_utc()).total_seconds() for event in events]
         positive = [delay for delay in future if delay > 0]
         time.sleep(min(remaining, 30, min(positive) if positive else 30))
+    run.finish(len(failures))
     if failures:
         for failure in sorted(set(failures)):
             print(f"- {failure}", file=sys.stderr)

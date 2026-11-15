@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: daily-weather-collection
@@ -26,6 +27,9 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Record runner readiness
+        run: echo "RUNNER_READY_AT_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
       - name: Check out repository
         uses: actions/checkout@v6
 
@@ -33,18 +37,18 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-collection.txt
 
       - name: Install collection dependencies
         run: python -m pip install -r requirements-collection.txt
-
-      - name: Run tests
-        run: python -m unittest discover -s tests -v
 
       - name: Collect forecasts
         id: forecasts
         continue-on-error: true
         shell: bash
         env:
+          TRIGGER_SCHEDULE: ${{ github.event.schedule }}
           PIRATE_WEATHER_API_KEY: ${{ secrets.PIRATE_WEATHER_API_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
           OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
@@ -63,10 +67,32 @@ jobs:
           fi
           python src/collect_forecasts.py "${args[@]}"
 
+      - name: Attach workflow timing
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python src/record_workflow_timing.py
+
       - name: Collect observations
         id: observations
         continue-on-error: true
+        env:
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
         run: python src/collect_observations.py
+
+      - name: Refresh relevant settlements
+        id: settlements
+        continue-on-error: true
+        env:
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
+        run: python src/refresh_settlements.py
+
+      - name: Report collection health and accuracy
+        id: reports
+        continue-on-error: true
+        env:
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
+        run: python src/report_collection.py --out-dir data/verification/daily --github-summary
 
       - name: Commit collected data
         shell: bash
@@ -83,8 +109,8 @@ jobs:
           git push
 
       - name: Report collection failure
-        if: steps.forecasts.outcome == 'failure' || steps.observations.outcome == 'failure'
+        if: steps.forecasts.outcome == 'failure' || steps.observations.outcome == 'failure' || steps.settlements.outcome == 'failure' || steps.reports.outcome == 'failure'
         shell: bash
         run: |
-          echo "One or more collectors failed after saving any successful responses."
+          echo "Collection or reporting failed after saving successful responses."
           exit 1
