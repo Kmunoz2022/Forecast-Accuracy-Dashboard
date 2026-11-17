@@ -1,6 +1,6 @@
 # Live forecast collection
 
-As of 2026-11-16T23:10:54Z — complete analysis.
+As of 2026-11-17T03:46:03Z — complete analysis.
 
 Expected captures: 2988. Ranking: insufficient_common_history.
 
