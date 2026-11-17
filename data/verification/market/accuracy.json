@@ -21,64 +21,64 @@
   },
   "comparison_tolerance_seconds": 600,
   "excluded_providers": [],
-  "generated_at_utc": "2026-11-17T03:46:03Z",
+  "generated_at_utc": "2026-11-17T13:14:28Z",
   "groups": [
     {
-      "candidate_cases": 143,
+      "candidate_cases": 148,
       "capture_time_mismatch_cases": 6,
       "cohort": "market_late",
-      "common_cases": 28,
-      "distinct_dates": 4,
+      "common_cases": 33,
+      "distinct_dates": 5,
       "duplicate_cases": 0,
       "metric": "high",
       "metrics": [
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 28,
+          "bias_f": -1.1818,
+          "mae_f": 1.9091,
+          "n": 33,
           "provider": "nws",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.3939,
+          "within_2f": 0.6364
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 28,
+          "bias_f": -2.8606,
+          "mae_f": 3.0242,
+          "n": 33,
           "provider": "open_meteo",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2121,
+          "within_2f": 0.3939
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 28,
+          "bias_f": -0.9715,
+          "mae_f": 2.3606,
+          "n": 33,
           "provider": "openweathermap",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.1818,
+          "within_2f": 0.4848
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 28,
+          "bias_f": -1.9173,
+          "mae_f": 2.1888,
+          "n": 33,
           "provider": "pirate_weather",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2727,
+          "within_2f": 0.5152
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 28,
+          "bias_f": -2.9073,
+          "mae_f": 3.0521,
+          "n": 33,
           "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.1818,
+          "within_2f": 0.3636
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 28,
+          "bias_f": -2.5788,
+          "mae_f": 2.5788,
+          "n": 33,
           "provider": "visual_crossing",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.1818,
+          "within_2f": 0.3939
         }
       ],
       "missing_provider_cases": 109,
@@ -92,82 +92,11 @@
         "visual_crossing"
       ],
       "station_id": "all",
-      "status": "insufficient_common_history"
+      "status": "scored"
     },
     {
-      "candidate_cases": 18,
+      "candidate_cases": 19,
       "capture_time_mismatch_cases": 2,
-      "cohort": "market_late",
-      "common_cases": 2,
-      "distinct_dates": 2,
-      "duplicate_cases": 0,
-      "metric": "high",
-      "metrics": [
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "nws",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "open_meteo",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "openweathermap",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "pirate_weather",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "visual_crossing",
-          "within_1f": null,
-          "within_2f": null
-        }
-      ],
-      "missing_provider_cases": 14,
-      "outcome_source": "kalshi_settlement:The Weather Company",
-      "providers": [
-        "nws",
-        "open_meteo",
-        "openweathermap",
-        "pirate_weather",
-        "tomorrow_io",
-        "visual_crossing"
-      ],
-      "station_id": "boston_logan",
-      "status": "insufficient_common_history"
-    },
-    {
-      "candidate_cases": 18,
-      "capture_time_mismatch_cases": 1,
       "cohort": "market_late",
       "common_cases": 3,
       "distinct_dates": 3,
@@ -233,12 +162,12 @@
         "tomorrow_io",
         "visual_crossing"
       ],
-      "station_id": "chicago_midway",
+      "station_id": "boston_logan",
       "status": "insufficient_common_history"
     },
     {
-      "candidate_cases": 18,
-      "capture_time_mismatch_cases": 0,
+      "candidate_cases": 19,
+      "capture_time_mismatch_cases": 1,
       "cohort": "market_late",
       "common_cases": 4,
       "distinct_dates": 4,
@@ -304,8 +233,79 @@
         "tomorrow_io",
         "visual_crossing"
       ],
-      "station_id": "dallas_fort_worth",
+      "station_id": "chicago_midway",
       "status": "insufficient_common_history"
+    },
+    {
+      "candidate_cases": 19,
+      "capture_time_mismatch_cases": 0,
+      "cohort": "market_late",
+      "common_cases": 5,
+      "distinct_dates": 5,
+      "duplicate_cases": 0,
+      "metric": "high",
+      "metrics": [
+        {
+          "bias_f": -1.8,
+          "mae_f": 1.8,
+          "n": 5,
+          "provider": "nws",
+          "within_1f": 0.6,
+          "within_2f": 0.6
+        },
+        {
+          "bias_f": -2.38,
+          "mae_f": 2.38,
+          "n": 5,
+          "provider": "open_meteo",
+          "within_1f": 0,
+          "within_2f": 0.6
+        },
+        {
+          "bias_f": -1.024,
+          "mae_f": 2.932,
+          "n": 5,
+          "provider": "openweathermap",
+          "within_1f": 0.2,
+          "within_2f": 0.2
+        },
+        {
+          "bias_f": -1.354,
+          "mae_f": 1.638,
+          "n": 5,
+          "provider": "pirate_weather",
+          "within_1f": 0.4,
+          "within_2f": 0.6
+        },
+        {
+          "bias_f": -2.502,
+          "mae_f": 2.502,
+          "n": 5,
+          "provider": "tomorrow_io",
+          "within_1f": 0,
+          "within_2f": 0.4
+        },
+        {
+          "bias_f": -2.08,
+          "mae_f": 2.08,
+          "n": 5,
+          "provider": "visual_crossing",
+          "within_1f": 0.2,
+          "within_2f": 0.6
+        }
+      ],
+      "missing_provider_cases": 14,
+      "outcome_source": "kalshi_settlement:The Weather Company",
+      "providers": [
+        "nws",
+        "open_meteo",
+        "openweathermap",
+        "pirate_weather",
+        "tomorrow_io",
+        "visual_crossing"
+      ],
+      "station_id": "dallas_fort_worth",
+      "status": "scored"
     },
     {
       "candidate_cases": 18,
@@ -379,6 +379,77 @@
       "status": "insufficient_common_history"
     },
     {
+      "candidate_cases": 19,
+      "capture_time_mismatch_cases": 0,
+      "cohort": "market_late",
+      "common_cases": 5,
+      "distinct_dates": 5,
+      "duplicate_cases": 0,
+      "metric": "high",
+      "metrics": [
+        {
+          "bias_f": -1.4,
+          "mae_f": 1.8,
+          "n": 5,
+          "provider": "nws",
+          "within_1f": 0.6,
+          "within_2f": 0.8
+        },
+        {
+          "bias_f": -2.36,
+          "mae_f": 2.56,
+          "n": 5,
+          "provider": "open_meteo",
+          "within_1f": 0.4,
+          "within_2f": 0.6
+        },
+        {
+          "bias_f": -1.706,
+          "mae_f": 2.306,
+          "n": 5,
+          "provider": "openweathermap",
+          "within_1f": 0.2,
+          "within_2f": 0.4
+        },
+        {
+          "bias_f": -1.686,
+          "mae_f": 1.766,
+          "n": 5,
+          "provider": "pirate_weather",
+          "within_1f": 0.4,
+          "within_2f": 0.6
+        },
+        {
+          "bias_f": -2.358,
+          "mae_f": 2.378,
+          "n": 5,
+          "provider": "tomorrow_io",
+          "within_1f": 0.4,
+          "within_2f": 0.8
+        },
+        {
+          "bias_f": -2.34,
+          "mae_f": 2.34,
+          "n": 5,
+          "provider": "visual_crossing",
+          "within_1f": 0.2,
+          "within_2f": 0.4
+        }
+      ],
+      "missing_provider_cases": 14,
+      "outcome_source": "kalshi_settlement:The Weather Company",
+      "providers": [
+        "nws",
+        "open_meteo",
+        "openweathermap",
+        "pirate_weather",
+        "tomorrow_io",
+        "visual_crossing"
+      ],
+      "station_id": "miami_international",
+      "status": "scored"
+    },
+    {
       "candidate_cases": 18,
       "capture_time_mismatch_cases": 0,
       "cohort": "market_late",
@@ -431,77 +502,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 4,
-          "provider": "visual_crossing",
-          "within_1f": null,
-          "within_2f": null
-        }
-      ],
-      "missing_provider_cases": 14,
-      "outcome_source": "kalshi_settlement:The Weather Company",
-      "providers": [
-        "nws",
-        "open_meteo",
-        "openweathermap",
-        "pirate_weather",
-        "tomorrow_io",
-        "visual_crossing"
-      ],
-      "station_id": "miami_international",
-      "status": "insufficient_common_history"
-    },
-    {
-      "candidate_cases": 17,
-      "capture_time_mismatch_cases": 0,
-      "cohort": "market_late",
-      "common_cases": 3,
-      "distinct_dates": 3,
-      "duplicate_cases": 0,
-      "metric": "high",
-      "metrics": [
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
-          "provider": "nws",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
-          "provider": "open_meteo",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
-          "provider": "openweathermap",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
-          "provider": "pirate_weather",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -663,61 +663,61 @@
       "status": "insufficient_common_history"
     },
     {
-      "candidate_cases": 144,
+      "candidate_cases": 149,
       "capture_time_mismatch_cases": 6,
       "cohort": "market_late",
-      "common_cases": 29,
-      "distinct_dates": 4,
+      "common_cases": 34,
+      "distinct_dates": 5,
       "duplicate_cases": 0,
       "metric": "low",
       "metrics": [
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 29,
+          "bias_f": 0.4118,
+          "mae_f": 1.5882,
+          "n": 34,
           "provider": "nws",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.5,
+          "within_2f": 0.8235
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 29,
+          "bias_f": -2.2588,
+          "mae_f": 2.5471,
+          "n": 34,
           "provider": "open_meteo",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2647,
+          "within_2f": 0.5882
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 29,
+          "bias_f": -0.7203,
+          "mae_f": 2.8591,
+          "n": 34,
           "provider": "openweathermap",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.1471,
+          "within_2f": 0.4412
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 29,
+          "bias_f": 0.7856,
+          "mae_f": 1.6679,
+          "n": 34,
           "provider": "pirate_weather",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.4118,
+          "within_2f": 0.6471
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 29,
+          "bias_f": -1.8191,
+          "mae_f": 2.2644,
+          "n": 34,
           "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.4118,
+          "within_2f": 0.6176
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 29,
+          "bias_f": 0.6765,
+          "mae_f": 1.8118,
+          "n": 34,
           "provider": "visual_crossing",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2647,
+          "within_2f": 0.5882
         }
       ],
       "missing_provider_cases": 109,
@@ -731,82 +731,11 @@
         "visual_crossing"
       ],
       "station_id": "all",
-      "status": "insufficient_common_history"
+      "status": "scored"
     },
     {
-      "candidate_cases": 18,
+      "candidate_cases": 19,
       "capture_time_mismatch_cases": 2,
-      "cohort": "market_late",
-      "common_cases": 2,
-      "distinct_dates": 2,
-      "duplicate_cases": 0,
-      "metric": "low",
-      "metrics": [
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "nws",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "open_meteo",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "openweathermap",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "pirate_weather",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 2,
-          "provider": "visual_crossing",
-          "within_1f": null,
-          "within_2f": null
-        }
-      ],
-      "missing_provider_cases": 14,
-      "outcome_source": "kalshi_settlement:The Weather Company",
-      "providers": [
-        "nws",
-        "open_meteo",
-        "openweathermap",
-        "pirate_weather",
-        "tomorrow_io",
-        "visual_crossing"
-      ],
-      "station_id": "boston_logan",
-      "status": "insufficient_common_history"
-    },
-    {
-      "candidate_cases": 18,
-      "capture_time_mismatch_cases": 1,
       "cohort": "market_late",
       "common_cases": 3,
       "distinct_dates": 3,
@@ -872,12 +801,12 @@
         "tomorrow_io",
         "visual_crossing"
       ],
-      "station_id": "chicago_midway",
+      "station_id": "boston_logan",
       "status": "insufficient_common_history"
     },
     {
-      "candidate_cases": 18,
-      "capture_time_mismatch_cases": 0,
+      "candidate_cases": 19,
+      "capture_time_mismatch_cases": 1,
       "cohort": "market_late",
       "common_cases": 4,
       "distinct_dates": 4,
@@ -943,8 +872,79 @@
         "tomorrow_io",
         "visual_crossing"
       ],
-      "station_id": "dallas_fort_worth",
+      "station_id": "chicago_midway",
       "status": "insufficient_common_history"
+    },
+    {
+      "candidate_cases": 19,
+      "capture_time_mismatch_cases": 0,
+      "cohort": "market_late",
+      "common_cases": 5,
+      "distinct_dates": 5,
+      "duplicate_cases": 0,
+      "metric": "low",
+      "metrics": [
+        {
+          "bias_f": 0.8,
+          "mae_f": 1.2,
+          "n": 5,
+          "provider": "nws",
+          "within_1f": 0.6,
+          "within_2f": 1
+        },
+        {
+          "bias_f": -0.82,
+          "mae_f": 1.1,
+          "n": 5,
+          "provider": "open_meteo",
+          "within_1f": 0.6,
+          "within_2f": 0.8
+        },
+        {
+          "bias_f": -0.388,
+          "mae_f": 2.596,
+          "n": 5,
+          "provider": "openweathermap",
+          "within_1f": 0,
+          "within_2f": 0.6
+        },
+        {
+          "bias_f": 1.194,
+          "mae_f": 1.614,
+          "n": 5,
+          "provider": "pirate_weather",
+          "within_1f": 0.2,
+          "within_2f": 0.6
+        },
+        {
+          "bias_f": -0.934,
+          "mae_f": 1.21,
+          "n": 5,
+          "provider": "tomorrow_io",
+          "within_1f": 0.6,
+          "within_2f": 0.8
+        },
+        {
+          "bias_f": 1.36,
+          "mae_f": 1.36,
+          "n": 5,
+          "provider": "visual_crossing",
+          "within_1f": 0.6,
+          "within_2f": 0.6
+        }
+      ],
+      "missing_provider_cases": 14,
+      "outcome_source": "kalshi_settlement:The Weather Company",
+      "providers": [
+        "nws",
+        "open_meteo",
+        "openweathermap",
+        "pirate_weather",
+        "tomorrow_io",
+        "visual_crossing"
+      ],
+      "station_id": "dallas_fort_worth",
+      "status": "scored"
     },
     {
       "candidate_cases": 18,
@@ -1018,61 +1018,61 @@
       "status": "insufficient_common_history"
     },
     {
-      "candidate_cases": 18,
+      "candidate_cases": 19,
       "capture_time_mismatch_cases": 0,
       "cohort": "market_late",
-      "common_cases": 4,
-      "distinct_dates": 4,
+      "common_cases": 5,
+      "distinct_dates": 5,
       "duplicate_cases": 0,
       "metric": "low",
       "metrics": [
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -1.0,
+          "mae_f": 1.4,
+          "n": 5,
           "provider": "nws",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.8,
+          "within_2f": 0.8
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -5.08,
+          "mae_f": 5.08,
+          "n": 5,
           "provider": "open_meteo",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2,
+          "within_2f": 0.2
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -2.192,
+          "mae_f": 2.2,
+          "n": 5,
           "provider": "openweathermap",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2,
+          "within_2f": 0.6
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -0.43,
+          "mae_f": 1.566,
+          "n": 5,
           "provider": "pirate_weather",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.6,
+          "within_2f": 0.6
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -4.908,
+          "mae_f": 4.908,
+          "n": 5,
           "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2,
+          "within_2f": 0.2
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -1.46,
+          "mae_f": 1.74,
+          "n": 5,
           "provider": "visual_crossing",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.4,
+          "within_2f": 0.8
         }
       ],
       "missing_provider_cases": 14,
@@ -1086,64 +1086,64 @@
         "visual_crossing"
       ],
       "station_id": "miami_international",
-      "status": "insufficient_common_history"
+      "status": "scored"
     },
     {
-      "candidate_cases": 18,
+      "candidate_cases": 19,
       "capture_time_mismatch_cases": 0,
       "cohort": "market_late",
-      "common_cases": 4,
-      "distinct_dates": 4,
+      "common_cases": 5,
+      "distinct_dates": 5,
       "duplicate_cases": 0,
       "metric": "low",
       "metrics": [
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": 1.0,
+          "mae_f": 1.8,
+          "n": 5,
           "provider": "nws",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.4,
+          "within_2f": 0.8
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -3.46,
+          "mae_f": 3.82,
+          "n": 5,
           "provider": "open_meteo",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.4,
+          "within_2f": 0.4
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -1.174,
+          "mae_f": 4.742,
+          "n": 5,
           "provider": "openweathermap",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0,
+          "within_2f": 0
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": 1.13,
+          "mae_f": 1.918,
+          "n": 5,
           "provider": "pirate_weather",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.4,
+          "within_2f": 0.6
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -3.262,
+          "mae_f": 3.734,
+          "n": 5,
           "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0.2,
+          "within_2f": 0.4
         },
         {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
+          "bias_f": -0.12,
+          "mae_f": 1.92,
+          "n": 5,
           "provider": "visual_crossing",
-          "within_1f": null,
-          "within_2f": null
+          "within_1f": 0,
+          "within_2f": 0.6
         }
       ],
       "missing_provider_cases": 14,
@@ -1157,7 +1157,7 @@
         "visual_crossing"
       ],
       "station_id": "nyc_central_park",
-      "status": "insufficient_common_history"
+      "status": "scored"
     },
     {
       "candidate_cases": 18,
@@ -2583,7 +2583,7 @@
   "lookback_days": 30,
   "minimum_distinct_dates": 5,
   "positive_bias_means": "forecast_too_warm",
-  "ranking_status": "insufficient_common_history",
+  "ranking_status": "available",
   "schema_version": 1,
   "status": "complete"
 }
