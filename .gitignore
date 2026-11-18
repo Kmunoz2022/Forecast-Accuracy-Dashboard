@@ -232,6 +232,7 @@ __marimo__/
 # Generated model results and locally shared reports
 outputs/
 reports/
+logs/
 
 # Private notes, never committed
 notes/

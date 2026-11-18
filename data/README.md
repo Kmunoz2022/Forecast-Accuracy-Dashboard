@@ -57,6 +57,11 @@ government open data. Do not add another provider's raw or normalized data until
 its terms explicitly permit long-term storage and the intended redistribution.
 Use Open-Meteo's commercial endpoint and plan for commercial workloads.
 
+OpenWeather data is provided under the Open Database License (ODbL). The stored
+OpenWeather records in this repository form an adapted database and are shared
+under the same ODbL terms. Credit: weather data provided by
+[OpenWeather](https://openweather.co.uk/).
+
 OpenWeather records generated from the free five-day endpoint contain extrema
 derived from three-hour forecast points; they are not native daily extrema.
 New rows aggregate `main.temp` and use the method

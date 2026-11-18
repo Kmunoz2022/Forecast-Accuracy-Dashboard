@@ -20,7 +20,7 @@ def bias_by_city(df: pd.DataFrame, metric: str, sources, path: Path) -> None:
                          for s in sources}).rename(index=CITY)
     fig, ax = plt.subplots(figsize=(8, 4.5))
     im = ax.imshow(bias.values, cmap="RdBu_r", vmin=-5, vmax=5)
-    ax.set_xticks(range(len(bias.columns)), bias.columns)
+    ax.set_xticks(range(len(bias.columns)), [c.replace(" ", "\n") for c in bias.columns])
     ax.set_yticks(range(len(bias)), bias.index)
     for i in range(bias.shape[0]):
         for j in range(bias.shape[1]):
