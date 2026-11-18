@@ -15,13 +15,12 @@
       "open_meteo",
       "openweathermap",
       "pirate_weather",
-      "tomorrow_io",
       "visual_crossing"
     ]
   },
   "comparison_tolerance_seconds": 600,
   "excluded_providers": [],
-  "generated_at_utc": "2026-11-18T00:28:25Z",
+  "generated_at_utc": "2026-11-18T04:14:14Z",
   "groups": [
     {
       "candidate_cases": 151,
@@ -65,14 +64,6 @@
           "within_2f": 0.5278
         },
         {
-          "bias_f": -3.0342,
-          "mae_f": 3.1669,
-          "n": 36,
-          "provider": "tomorrow_io",
-          "within_1f": 0.1667,
-          "within_2f": 0.3611
-        },
-        {
           "bias_f": -2.5861,
           "mae_f": 2.5861,
           "n": 36,
@@ -88,7 +79,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "all",
@@ -139,14 +129,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 3,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -159,7 +141,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "boston_logan",
@@ -210,14 +191,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 4,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -230,7 +203,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "chicago_midway",
@@ -278,14 +250,6 @@
           "within_2f": 0.6
         },
         {
-          "bias_f": -2.502,
-          "mae_f": 2.502,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0,
-          "within_2f": 0.4
-        },
-        {
           "bias_f": -2.08,
           "mae_f": 2.08,
           "n": 5,
@@ -301,7 +265,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "dallas_fort_worth",
@@ -349,14 +312,6 @@
           "within_2f": 0.8
         },
         {
-          "bias_f": -2.194,
-          "mae_f": 2.946,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.2,
-          "within_2f": 0.6
-        },
-        {
           "bias_f": -2.22,
           "mae_f": 2.22,
           "n": 5,
@@ -372,7 +327,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "los_angeles_lax",
@@ -420,14 +374,6 @@
           "within_2f": 0.6
         },
         {
-          "bias_f": -2.358,
-          "mae_f": 2.378,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.4,
-          "within_2f": 0.8
-        },
-        {
           "bias_f": -2.34,
           "mae_f": 2.34,
           "n": 5,
@@ -443,7 +389,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "miami_international",
@@ -494,14 +439,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 4,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -514,7 +451,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "nyc_central_park",
@@ -562,14 +498,6 @@
           "within_2f": 0.6
         },
         {
-          "bias_f": -3.274,
-          "mae_f": 3.274,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0,
-          "within_2f": 0
-        },
-        {
           "bias_f": -2.9,
           "mae_f": 2.9,
           "n": 5,
@@ -585,7 +513,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "san_francisco_sfo",
@@ -633,14 +560,6 @@
           "within_2f": 0.2
         },
         {
-          "bias_f": -3.814,
-          "mae_f": 3.814,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.2,
-          "within_2f": 0.4
-        },
-        {
           "bias_f": -3.34,
           "mae_f": 3.34,
           "n": 5,
@@ -656,7 +575,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "seattle_tacoma",
@@ -704,14 +622,6 @@
           "within_2f": 0.6216
         },
         {
-          "bias_f": -1.997,
-          "mae_f": 2.4062,
-          "n": 37,
-          "provider": "tomorrow_io",
-          "within_1f": 0.4324,
-          "within_2f": 0.6216
-        },
-        {
           "bias_f": 0.7351,
           "mae_f": 1.8811,
           "n": 37,
@@ -727,7 +637,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "all",
@@ -778,14 +687,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 3,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 3,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -798,7 +699,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "boston_logan",
@@ -849,14 +749,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 4,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 4,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -869,7 +761,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "chicago_midway",
@@ -917,14 +808,6 @@
           "within_2f": 0.6
         },
         {
-          "bias_f": -0.934,
-          "mae_f": 1.21,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.6,
-          "within_2f": 0.8
-        },
-        {
           "bias_f": 1.36,
           "mae_f": 1.36,
           "n": 5,
@@ -940,7 +823,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "dallas_fort_worth",
@@ -988,14 +870,6 @@
           "within_2f": 0.8
         },
         {
-          "bias_f": -3.242,
-          "mae_f": 3.278,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.2,
-          "within_2f": 0.6
-        },
-        {
           "bias_f": 0.52,
           "mae_f": 1.28,
           "n": 5,
@@ -1011,7 +885,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "los_angeles_lax",
@@ -1059,14 +932,6 @@
           "within_2f": 0.6
         },
         {
-          "bias_f": -4.908,
-          "mae_f": 4.908,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.2,
-          "within_2f": 0.2
-        },
-        {
           "bias_f": -1.46,
           "mae_f": 1.74,
           "n": 5,
@@ -1082,7 +947,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "miami_international",
@@ -1130,14 +994,6 @@
           "within_2f": 0.6
         },
         {
-          "bias_f": -3.262,
-          "mae_f": 3.734,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.2,
-          "within_2f": 0.4
-        },
-        {
           "bias_f": -0.12,
           "mae_f": 1.92,
           "n": 5,
@@ -1153,7 +1009,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "nyc_central_park",
@@ -1201,14 +1056,6 @@
           "within_2f": 0.8
         },
         {
-          "bias_f": -0.344,
-          "mae_f": 0.608,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.8,
-          "within_2f": 1
-        },
-        {
           "bias_f": 2.58,
           "mae_f": 2.58,
           "n": 5,
@@ -1224,7 +1071,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "san_francisco_sfo",
@@ -1272,14 +1118,6 @@
           "within_2f": 0.4
         },
         {
-          "bias_f": -0.1,
-          "mae_f": 0.848,
-          "n": 5,
-          "provider": "tomorrow_io",
-          "within_1f": 0.6,
-          "within_2f": 1
-        },
-        {
           "bias_f": 2.52,
           "mae_f": 2.52,
           "n": 5,
@@ -1295,7 +1133,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "seattle_tacoma",
@@ -1346,14 +1183,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1366,7 +1195,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "all",
@@ -1417,14 +1245,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1437,7 +1257,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "boston_logan",
@@ -1488,14 +1307,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1508,7 +1319,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "chicago_midway",
@@ -1559,14 +1369,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1579,7 +1381,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "dallas_fort_worth",
@@ -1630,14 +1431,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1650,7 +1443,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "los_angeles_lax",
@@ -1701,14 +1493,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1721,7 +1505,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "miami_international",
@@ -1772,14 +1555,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1792,7 +1567,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "nyc_central_park",
@@ -1843,14 +1617,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1863,7 +1629,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "san_francisco_sfo",
@@ -1914,14 +1679,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -1934,7 +1691,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "seattle_tacoma",
@@ -1985,14 +1741,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2005,7 +1753,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "all",
@@ -2056,14 +1803,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2076,7 +1815,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "boston_logan",
@@ -2127,14 +1865,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2147,7 +1877,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "chicago_midway",
@@ -2198,14 +1927,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2218,7 +1939,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "dallas_fort_worth",
@@ -2269,14 +1989,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2289,7 +2001,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "los_angeles_lax",
@@ -2340,14 +2051,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2360,7 +2063,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "miami_international",
@@ -2411,14 +2113,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2431,7 +2125,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "nyc_central_park",
@@ -2482,14 +2175,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2502,7 +2187,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "san_francisco_sfo",
@@ -2553,14 +2237,6 @@
           "bias_f": null,
           "mae_f": null,
           "n": 0,
-          "provider": "tomorrow_io",
-          "within_1f": null,
-          "within_2f": null
-        },
-        {
-          "bias_f": null,
-          "mae_f": null,
-          "n": 0,
           "provider": "visual_crossing",
           "within_1f": null,
           "within_2f": null
@@ -2573,7 +2249,6 @@
         "open_meteo",
         "openweathermap",
         "pirate_weather",
-        "tomorrow_io",
         "visual_crossing"
       ],
       "station_id": "seattle_tacoma",

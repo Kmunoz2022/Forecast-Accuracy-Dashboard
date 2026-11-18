@@ -15,12 +15,11 @@
       "open_meteo",
       "openweathermap",
       "pirate_weather",
-      "tomorrow_io",
       "visual_crossing"
     ]
   },
   "excluded_providers": [],
-  "generated_at_utc": "2026-11-18T00:28:25Z",
+  "generated_at_utc": "2026-11-18T04:14:14Z",
   "lookback_days": 30,
   "runs": [
     {
@@ -2782,6 +2781,29 @@
       "workflow_created_at_utc": "2026-11-17T22:15:11Z",
       "workflow_started_at_utc": "2026-11-17T22:15:11Z",
       "workflow_url": "https://github.com/ZerroCode/Forecast-Accuracy-Dashboard/actions/runs/44188190649"
+    },
+    {
+      "collector_finished_at_utc": "2026-11-18T04:14:13.780759Z",
+      "collector_seconds": 13.054,
+      "collector_started_at_utc": "2026-11-18T04:14:00.726863Z",
+      "creation_to_job_seconds": 2.0,
+      "discovery_seconds": 12.983,
+      "failure_count": 0,
+      "github_run_attempt": "1",
+      "github_run_id": "44235868107",
+      "job_started_at_utc": "2026-11-18T04:13:54Z",
+      "job_to_collector_seconds": 6.727,
+      "kind": "market",
+      "requests": [],
+      "runner_ready_at_utc": "2026-11-18T04:13:55Z",
+      "setup_seconds": 5.727,
+      "status": "completed",
+      "timing_status": "available",
+      "trigger": "schedule",
+      "trigger_schedule": "7 * * * *",
+      "workflow_created_at_utc": "2026-11-18T04:13:52Z",
+      "workflow_started_at_utc": "2026-11-18T04:13:52Z",
+      "workflow_url": "https://github.com/ZerroCode/Forecast-Accuracy-Dashboard/actions/runs/44235868107"
     }
   ],
   "schema_version": 1,
