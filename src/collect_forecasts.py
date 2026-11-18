@@ -10,6 +10,7 @@ from typing import Any, Callable
 from zoneinfo import ZoneInfo
 
 from weather_pipeline.config import Station, load_stations
+from weather_pipeline.encryption import configured_key
 from weather_pipeline.http import RequestError
 from weather_pipeline.providers.nws import fetch_forecast as fetch_nws
 from weather_pipeline.providers.open_meteo import fetch_forecast as fetch_open_meteo
@@ -32,11 +33,21 @@ class EnabledProvider:
     slug: str
     fetch: Callable[[Station], tuple[dict[str, Any], dict[str, Any], str]]
     archive_key: str | None = field(default=None, repr=False)
+    legacy_archive_key: str | None = field(default=None, repr=False)
 
     def output_path(self, path: Path) -> Path:
         if self.archive_key is not None:
             return path.with_name(f"{path.name}.{self.slug}.enc")
         return path
+
+    def existing_rows(self, path: Path) -> list[dict]:
+        rows = read_jsonl(self.output_path(path), encryption_key=self.archive_key,
+                          legacy_encryption_key=self.legacy_archive_key)
+        if self.archive_key is not None:
+            # Until migration, successful plaintext captures must still suppress a
+            # replacement request. Never rewrite their original issue/arrival times.
+            rows += [r for r in read_jsonl(path) if r.get("provider") == self.slug]
+        return rows
 
 
 def parse_args() -> argparse.Namespace:
@@ -100,6 +111,7 @@ def configured_providers(
                     api_key=openweather_key,
                     window=window,
                 ),
+                archive_key=configured_key(),
             )
         )
     else:
@@ -112,6 +124,7 @@ def configured_providers(
             fetch=lambda station: fetch_pirate_weather(
                 station, retrieved_at=retrieved_at, api_key=pirate_key, window=window,
             ),
+            archive_key=configured_key(),
         ))
     else:
         announce("PIRATE_WEATHER_API_KEY is not set; skipping Pirate Weather")
@@ -123,7 +136,7 @@ def configured_providers(
             fetch=lambda station: fetch_visual_crossing(
                 station, retrieved_at=retrieved_at, api_key=visual_crossing_key, window=window,
             ),
-            archive_key=visual_crossing_key,
+            archive_key=configured_key(), legacy_archive_key=visual_crossing_key,
         ))
     else:
         announce("VISUALCROSSING_API_KEY is not set; skipping Visual Crossing")
@@ -140,6 +153,7 @@ def configured_providers(
                     retrieved_at=retrieved_at,
                     api_key=weatherbit_key,
                 ),
+                archive_key=configured_key(),
             )
         )
     elif weatherbit_key:
@@ -159,6 +173,7 @@ def configured_providers(
                     api_key=tomorrow_key,
                     window=window,
                 ),
+                archive_key=configured_key(),
             )
         )
     elif tomorrow_key:
@@ -182,7 +197,11 @@ def main() -> int:
     if not stations:
         print("No active stations; no requests made.")
         return 0
-    providers = configured_providers(retrieved_at)
+    try:
+        providers = configured_providers(retrieved_at)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
     clock = (lambda: retrieved_at) if args.as_of else now_utc
     run = RunLog(args.data_dir, "daily", clock=clock)
     snapshot_date = retrieved_at.date().isoformat()
@@ -213,7 +232,7 @@ def main() -> int:
         try:
             existing_keys = {
                 tuple(row[field] for field in KEY_FIELDS)
-                for row in read_jsonl(provider_path, encryption_key=provider.archive_key)
+                for row in provider.existing_rows(output_path)
             }
         except Exception as exc:
             failures.append(f"{provider.slug}/archive: {failure_reason(exc)}")
@@ -285,6 +304,7 @@ def main() -> int:
                 replace=args.refresh,
                 ignore_compare_fields=frozenset({"retrieved_at_utc"}),
                 encryption_key=provider.archive_key,
+                legacy_encryption_key=provider.legacy_archive_key,
             )
             saved = {r["station_id"] for r in records}
             for station in stations:

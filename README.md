@@ -51,8 +51,8 @@ Open-Meteo, NWS, NOAA/NCEI, and Kalshi's public market API need no keys.
 | NWS | Hourly forecasts | Enabled by default |
 | NOAA/NCEI | Observed daily highs/lows | Enabled by default |
 | Kalshi | Opening times, rules, thresholds, sources, and available result fields | Enabled in the market workflow |
-| OpenWeather | Three-hour forecasts | Secret: `OPENWEATHERMAP_API_KEY` |
-| Pirate Weather | Live hourly forecasts in both workflows | Secret: `PIRATE_WEATHER_API_KEY` |
+| OpenWeather | Three-hour forecasts; encrypted storage | Secret: `OPENWEATHERMAP_API_KEY` |
+| Pirate Weather | Live hourly forecasts in both workflows; encrypted storage | Secret: `PIRATE_WEATHER_API_KEY` |
 | Visual Crossing | Live hourly forecasts in both workflows; encrypted storage | Secret: `VISUALCROSSING_API_KEY` |
 | Tomorrow.io | Hourly forecasts | Secret: `TOMORROW_API_KEYS`; variable: `TOMORROW_ARCHIVAL_ALLOWED=true` |
 | Weatherbit | Daily forecasts, morning workflow only | Secret: `WEATHERBIT_API_KEY`; variable: `WEATHERBIT_ARCHIVAL_ALLOWED=true` |
@@ -60,7 +60,9 @@ Open-Meteo, NWS, NOAA/NCEI, and Kalshi's public market API need no keys.
 Add secrets and variables under **Settings > Secrets and variables > Actions**,
 using the corresponding **Secrets** and **Variables** tabs. Enable archival
 variables only when your provider plan permits the intended storage. Weatherbit's
-daily aggregates cannot be shifted to the market reporting window.
+daily aggregates cannot be shifted to the market reporting window. All keyed
+forecast providers also require the separate `DATA_ENCRYPTION_KEY` secret. Missing
+or malformed archive keys stop keyed collection instead of writing plaintext.
 
 `GOOGLE_MAPS_DEMO_API_KEY` and `WEATHERAPI_API_KEY` are not used by the collectors.
 AccuWeather, Ambee, and Meteomatics are not integrated. Provider attribution and
@@ -74,12 +76,68 @@ outcomes are refreshed for corrections within the last 14 days. Gaps and unrelat
 station-dates are not filled. Add historical data only when its issue time, station,
 and reporting window make it usable for this project's accuracy evaluation.
 
-Visual Crossing archives are encrypted with `VISUALCROSSING_API_KEY` because this
-repository is public. No additional secret or repository variable is required.
-**Preserve the original key securely before rotating it:** it is needed to read
-files encrypted with that key, even after the API credential is revoked. Keys and
-decrypted exports must stay out of Git. Pirate Weather snapshots use the ordinary
-JSONL files. Neither provider's credentials are included in saved source URLs.
+New protected archives use a dedicated, randomly generated `DATA_ENCRYPTION_KEY`.
+API keys authenticate requests; they no longer encrypt new files. OpenWeather,
+Pirate Weather, and Visual Crossing forecasts and optional raw responses are
+encrypted. Public-source observations, market metadata, and the existing historical
+training CSVs keep their current formats. Encryption does not grant retention,
+redistribution, model-training, or benchmarking rights.
+
+Keep `WEATHERBIT_ARCHIVAL_ALLOWED` and `TOMORROW_ARCHIVAL_ALLOWED` false unless the
+applicable agreement permits the intended use. Their existing records are left
+for a separate cleanup and are never selected by the encryption migration.
+
+## Archive key setup and migration
+
+Create a key once on a trusted machine:
+
+```shell
+python src/create_archive_key.py
+```
+
+This creates a gitignored `.env` with owner-only permissions and a random 32-byte
+key encoded as URL-safe base64. It never prints the key and refuses to overwrite
+an existing file. Copy the value into the **GitHub Actions repository secret**
+`DATA_ENCRYPTION_KEY` and keep a secure backup. Do not put it in repository variables,
+committed configuration, logs, or chat. The scripts do not automatically source
+`.env`; migration, reports, and private exports accept `--key-file .env` locally.
+
+The collection workflows migrate permitted older archives after capture, outside
+the timed request path. **Migrate encrypted forecast archives** also runs when its
+workflow or migration/encryption code is pushed to `main`, and can be run manually
+in Actions. It performs migration only, without weather API calls. GitHub supplies both
+the new secret and the original `VISUALCROSSING_API_KEY` needed by legacy files.
+
+For local migration:
+
+```shell
+# Read-only plan. Legacy Visual Crossing files need the original API key in the environment.
+python src/migrate_archives.py --key-file .env
+
+# Apply after all selected inputs have been read and validated.
+python src/migrate_archives.py --key-file .env --apply
+
+# If only the dedicated key is available locally, migrate these two providers first.
+python src/migrate_archives.py --key-file .env --providers openweathermap pirate_weather --apply
+```
+
+Migration splits selected providers out of shared JSONL files, preserves their
+original records and capture times, and encrypts optional raw responses. It verifies
+encrypted outputs before removing plaintext originals. Missing/wrong keys, damaged
+archives, and conflicting snapshots stop preflight without changing files. An
+interrupted write can leave identical duplicate copies; rerunning safely completes
+the migration. It never replaces originals with newly fetched forecasts.
+
+Once migrated, reading current archives needs only `DATA_ENCRYPTION_KEY`; teammates
+can work with saved data without provider credentials. Legacy `FAD1` Visual Crossing
+files still require their original API key. Preserve that key for old Git revisions
+and backups. This migration changes the working tree only; it does not remove past
+plaintext from Git history, forks, or existing clones.
+
+To rotate the dedicated key, retain the old key securely and run a complete migration
+with `--key-file NEW_PRIVATE_FILE --previous-key-file OLD_PRIVATE_FILE --apply`.
+Then update the Actions secret to match the migrated archives. Coordinate this with
+collection jobs; do not discard old keys while old revisions or backups are needed.
 
 ## Stations
 
@@ -174,7 +232,8 @@ Scoring follows these rules:
   Error statistics remain null until at least five common target dates exist.
   This is a publication minimum, not a claim of statistical significance.
 
-Visual Crossing forecasts are decrypted in memory using the existing secret.
+Protected forecasts are decrypted in memory using `DATA_ENCRYPTION_KEY` (or the
+original Visual Crossing API key for unmigrated legacy files).
 Public reports contain no individual predictions, outcome values, or errors.
 Missing/wrong keys produce an explicit partial-analysis report; affected providers
 are excluded and the reduced comparison roster is shown. No decrypted file is written.
@@ -211,14 +270,14 @@ python src/report_collection.py
 Optional provider credentials must be available as environment variables locally.
 GitHub Actions secrets are available only within the workflows.
 
-With `VISUALCROSSING_API_KEY` exported locally, decrypt saved forecasts for analysis:
+With the archive key available locally, decrypt saved forecasts for analysis:
 
 ```shell
-python src/export_private_forecasts.py
+python src/export_private_forecasts.py --key-file .env
 ```
 
 This makes no API calls. It writes JSONL under the gitignored
-`data/private/visual_crossing/` directory, preserving separate `forecasts/` and
+`data/private/<provider>/` directories, preserving separate `forecasts/` and
 `market_forecasts/` datasets. The historical model-training dataset is not
 automatically extended with these new live providers. Live verification reads the
 encrypted archives directly, so it does not require this export. A missing or wrong

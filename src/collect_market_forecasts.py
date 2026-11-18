@@ -71,7 +71,7 @@ def collect_events(
                 try:
                     known[output] = {
                         tuple(row[k] for k in FORECAST_KEYS)
-                        for row in read_jsonl(output, encryption_key=provider.archive_key)
+                        for row in provider.existing_rows(dated_path(root, "market_forecasts", target))
                     }
                 except Exception as exc:
                     failures.append(f"{event.ticker}/{provider.slug}/archive: {failure_reason(exc)}")
@@ -151,7 +151,8 @@ def collect_events(
                     }
                     try:
                         upsert_jsonl(output, [saved], key_fields=FORECAST_KEYS,
-                                     encryption_key=provider.archive_key)
+                                     encryption_key=provider.archive_key,
+                                     legacy_encryption_key=provider.legacy_archive_key)
                         known[output].add(key)
                         audit["status"] = saved["capture_status"]
                         print(f"Saved {event.ticker}/{provider.slug}: {saved['capture_status']} "

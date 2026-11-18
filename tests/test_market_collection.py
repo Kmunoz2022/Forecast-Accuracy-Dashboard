@@ -256,7 +256,7 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(2, self.fetch.call_count)
 
     def test_encrypted_provider_reuses_snapshots_without_publishing_temperatures(self):
-        secret = "test-archive-secret"
+        secret = "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
         self.fetch.return_value = ({
             "provider": "visual_crossing", "forecast_high_f": 71.25,
             **self.event.window.metadata(),
@@ -310,7 +310,8 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual("test", self.rows()[0]["provider"])
 
     def test_weatherbit_is_excluded_from_market_window(self):
-        with patch.dict("os.environ", {"WEATHERBIT_API_KEY": "fake", "WEATHERBIT_ARCHIVAL_ALLOWED": "true"}, clear=True), \
+        with patch.dict("os.environ", {"WEATHERBIT_API_KEY": "fake", "WEATHERBIT_ARCHIVAL_ALLOWED": "true",
+                                       "DATA_ENCRYPTION_KEY": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="}, clear=True), \
                 patch("sys.stdout", new_callable=io.StringIO):
             self.assertNotIn("weatherbit", [p.slug for p in configured_providers(OPEN, self.event.window)])
             self.assertIn("weatherbit", [p.slug for p in configured_providers(OPEN)])

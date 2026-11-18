@@ -1,6 +1,6 @@
 # Collected data
 
-Live verification adds these public metadata files (no individual Visual Crossing
+Live verification adds these public metadata files (no individual protected-provider
 temperatures or forecast errors):
 
 - `daily_collection/YYYY/MM/YYYY-MM-DD.jsonl`: provider/station/date save or failure status.
@@ -21,22 +21,23 @@ in [the project README](../README.md#live-health-and-accuracy-reports).
 The collection workflow writes deterministic, date-partitioned files here:
 
 - `forecasts/YYYY/MM/YYYY-MM-DD.jsonl` contains normalized next-day forecasts.
-- `forecasts/YYYY/MM/YYYY-MM-DD.jsonl.visual_crossing.enc` contains encrypted
-  Visual Crossing next-day forecasts with the same normalized schema.
+- `forecasts/YYYY/MM/YYYY-MM-DD.jsonl.<provider>.enc` contains encrypted next-day
+  forecasts with the same normalized schema, separately for `openweathermap`,
+  `pirate_weather`, and `visual_crossing`.
 - `observations/YYYY/MM/YYYY-MM-DD.jsonl` contains NOAA/NCEI daily outcomes.
 - `markets/YYYY/MM/YYYY-MM-DD.jsonl` contains contract rules and source metadata,
   partitioned by the market's temperature date and keyed by ticker/rules version.
 - `market_forecasts/YYYY/MM/YYYY-MM-DD.jsonl` contains immutable first forecasts
   after a market opens, keyed by provider/event/opening timestamp. These use the
   shared `config/stations.csv` registry and a 24-hour local-standard-time window.
-- `market_forecasts/YYYY/MM/YYYY-MM-DD.jsonl.visual_crossing.enc` contains
-  encrypted Visual Crossing market snapshots with the same immutability rules.
+- `market_forecasts/YYYY/MM/YYYY-MM-DD.jsonl.<provider>.enc` contains
+  encrypted market snapshots with the same immutability rules.
 - `market_collection/YYYY/MM/YYYY-MM-DD.jsonl` records capture status, including
   missed openings and provider failures that must not be mistaken for data.
 - `raw/<provider>/...` preserves source responses only when the collector runs
   with `--save-raw` and the source permits archival storage. Scheduled runs store
-  only the normalized records. Existing raw archives are left in place.
-- `private/visual_crossing/` holds local decrypted exports and is ignored by Git.
+  only the normalized records. Migrated raw files use `.json.<provider>.enc`.
+- `private/<provider>/` holds local decrypted exports and is ignored by Git.
 
 Unencrypted JSONL files contain one JSON object per line. The `schema_version` field allows
 future migrations without silently changing existing records.
@@ -83,17 +84,26 @@ Attribution is included in every normalized record:
 - [Visual Crossing](https://www.visualcrossing.com/) ([Timeline documentation](https://www.visualcrossing.com/resources/documentation/weather-api/timeline-weather-api/))
 
 [Visual Crossing's storage guidance](https://www.visualcrossing.com/resources/documentation/can-i-cache-and-store-visual-crossing-weather-data/)
-permits application archives but restricts public data downloads. All its forecast
-records and optional raw payloads are therefore encrypted before writing, including
-temporary files. Public collection audits contain status/timing metadata, not
-temperatures. The format is versioned (`FAD1`), with a random salt, scrypt-derived
-key, and authenticated Fernet encryption. The only key source is the existing
-`VISUALCROSSING_API_KEY` secret. Preserve old keys securely if credentials rotate;
-old files still need the key originally used. Wrong keys or damaged ciphertext
-fail without replacing existing data.
+distinguishes application archives from public downloads. Encryption controls
+access but does not supply missing licensing permissions. OpenWeather, Pirate
+Weather, and Visual Crossing now use authenticated Fernet encryption with the
+dedicated `DATA_ENCRYPTION_KEY`, including temporary files. Public collection
+audits contain status/timing metadata, not temperatures.
 
-`python src/export_private_forecasts.py` decrypts normalized snapshots under
-`data/private/visual_crossing/` using the locally exported key and makes no network
+`FAD2` files begin with a format marker and a non-secret key identifier, followed by
+the authenticated ciphertext. The archive key must encode 32 cryptographically
+random bytes. `FAD1` is supported for reading legacy Visual Crossing files only;
+it uses a random salt and scrypt with the original API key. Migration decrypts
+these files in memory and writes `FAD2` using the dedicated key. Wrong keys or
+damaged ciphertext fail without replacing existing data.
+
+`src/migrate_archives.py` migrates only permitted live forecast and raw archives.
+It does not change historical training CSVs or rewrite Git history. Weatherbit and
+Tomorrow.io records are left unchanged for a separate cleanup. Keep their archival
+variables false. Backup keys remain necessary to read older encrypted revisions.
+
+`python src/export_private_forecasts.py --key-file .env` decrypts normalized snapshots under
+`data/private/<provider>/` using the local archive key and makes no network
 requests. Keep those files private. The scheduled workflows never decrypt to disk
 or upload plaintext artifacts. Pirate Weather is served from public weather models;
 its code license is not a statement about every upstream dataset's license. Preserve

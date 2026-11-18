@@ -210,6 +210,7 @@ tempCodeRunnerFile.py
 *.jsonl.tmp
 *.csv.tmp
 *.enc.tmp
+*.migration.tmp
 
 # Private decrypted provider exports
 data/private/

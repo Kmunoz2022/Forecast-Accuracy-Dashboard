@@ -50,6 +50,7 @@ jobs:
         env:
           TRIGGER_SCHEDULE: ${{ github.event.schedule }}
           PIRATE_WEATHER_API_KEY: ${{ secrets.PIRATE_WEATHER_API_KEY }}
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
           OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
           WEATHERBIT_API_KEY: ${{ secrets.WEATHERBIT_API_KEY }}
@@ -73,10 +74,19 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: python src/record_workflow_timing.py
 
+      - name: Migrate permitted archives
+        id: migration
+        continue-on-error: true
+        env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
+        run: python src/migrate_archives.py --apply
+
       - name: Collect observations
         id: observations
         continue-on-error: true
         env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
         run: python src/collect_observations.py
 
@@ -84,6 +94,7 @@ jobs:
         id: settlements
         continue-on-error: true
         env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
         run: python src/refresh_settlements.py
 
@@ -91,6 +102,7 @@ jobs:
         id: reports
         continue-on-error: true
         env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
         run: python src/report_collection.py --out-dir data/verification/daily --github-summary
 
@@ -109,7 +121,7 @@ jobs:
           git push
 
       - name: Report collection failure
-        if: steps.forecasts.outcome == 'failure' || steps.observations.outcome == 'failure' || steps.settlements.outcome == 'failure' || steps.reports.outcome == 'failure'
+        if: steps.migration.outcome == 'failure' || steps.forecasts.outcome == 'failure' || steps.observations.outcome == 'failure' || steps.settlements.outcome == 'failure' || steps.reports.outcome == 'failure'
         shell: bash
         run: |
           echo "Collection or reporting failed after saving successful responses."

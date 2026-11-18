@@ -8,7 +8,7 @@ from pathlib import Path
 from statistics import median
 from zoneinfo import ZoneInfo
 
-from weather_pipeline.archive import load_category
+from weather_pipeline.archive import PROTECTED_PROVIDERS, load_category
 from weather_pipeline.kalshi import parse_time
 from weather_pipeline.verification import (
     DAILY_TIME, DAILY_TOLERANCE, MIN_SCORE_DATES, Outcomes, aggregate_scores,
@@ -101,7 +101,7 @@ def build_reports(root: Path, stations, now: datetime, *, lookback_days=30, key=
         loaded[category] = usable
     outcomes = Outcomes(loaded["markets"], loaded["observations"])
     details, samples, rosters = [], [], {}
-    excluded = sorted({p["provider"] for p in problems if p.get("provider") == "visual_crossing"})
+    excluded = sorted({p["provider"] for p in problems if p.get("provider") in PROTECTED_PROVIDERS})
     for kind, category in KINDS.items():
         expected, saved, audits, duplicate = {}, {}, {}, set()
         first_seen = {}
@@ -141,13 +141,14 @@ def build_reports(root: Path, stations, now: datetime, *, lookback_days=30, key=
                 register(item)
         unavailable_dates = set()
         for problem in problems:
-            if problem["category"] == category and problem.get("provider") == "visual_crossing":
+            if problem["category"] == category and problem.get("provider") in PROTECTED_PROVIDERS:
+                provider = problem["provider"]
                 try:
                     day = date.fromisoformat(problem["file"][:10])
-                    unavailable_dates.add(day.isoformat())
+                    unavailable_dates.add((provider, day.isoformat()))
                 except ValueError:
                     day = cutoff
-                first_seen["visual_crossing"] = min(first_seen.get("visual_crossing", day), day)
+                first_seen[provider] = min(first_seen.get(provider, day), day)
         # Current comparison roster includes configured providers that failed every request.
         rosters[kind] = sorted({r["provider"] for r in kind_runs[-1].get("expected", [])}
                                if kind_runs and kind_runs[-1].get("expected") else first_seen)
@@ -193,7 +194,7 @@ def build_reports(root: Path, stations, now: datetime, *, lookback_days=30, key=
                 partition = item["snapshot_date_utc"] if kind == "daily" else item["target_date_local"]
                 if item["provider"] in excluded and (
                     detail["collection_status"] in {"saved", "existing", "near_open", "late"} or
-                    (not audit and partition in unavailable_dates)
+                    (not audit and (item["provider"], partition) in unavailable_dates)
                 ):
                     detail["collection_status"] = "encrypted_archive_unavailable"
                 elif detail["collection_status"] in {"saved", "existing", "near_open", "late"}:
@@ -253,7 +254,7 @@ def build_reports(root: Path, stations, now: datetime, *, lookback_days=30, key=
     # Incomplete public forecast/outcome archives cannot establish a fair roster or
     # a consistent settlement. Encrypted-provider failures can be explicitly excluded.
     blocked = any(p.get("category") in {*KINDS.values(), "markets", "observations"} and
-                  p.get("provider") != "visual_crossing" for p in problems)
+                  p.get("provider") not in PROTECTED_PROVIDERS for p in problems)
     score_groups = [] if blocked else aggregate_scores(samples, rosters, excluded=excluded)
     common = {"schema_version": 1, "generated_at_utc": utc_text(now), "lookback_days": lookback_days,
               "status": "partial" if problems else "complete", "archive_problems": problems,

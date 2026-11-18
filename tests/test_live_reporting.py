@@ -24,7 +24,7 @@ from weather_pipeline.windows import local_day, standard_day, utc_text
 
 STATION = load_stations(ROOT / "config/stations.csv")[0]
 NOW = datetime(2026, 11, 20, 18, tzinfo=timezone.utc)
-SECRET = "test-live-report-secret"
+SECRET = "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
 
 
 def forecast(day=10, provider="open_meteo", metric="high", kind="market", delay=120):

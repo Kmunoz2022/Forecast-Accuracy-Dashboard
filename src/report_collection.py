@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 from collect_forecasts import parse_as_of
+from migrate_archives import read_key_file
 from weather_pipeline.config import load_stations
 from weather_pipeline.live_report import build_reports, markdown_summary
 from weather_pipeline.storage import write_json
@@ -21,11 +22,13 @@ def main():
     parser.add_argument("--as-of")
     parser.add_argument("--lookback-days", type=int, default=30)
     parser.add_argument("--github-summary", action="store_true")
+    parser.add_argument("--key-file", type=Path, help="Private archive key file; otherwise use DATA_ENCRYPTION_KEY")
     args = parser.parse_args()
     if args.lookback_days < 1:
         parser.error("--lookback-days must be positive")
     health, accuracy = build_reports(args.data_dir, load_stations(args.stations), parse_as_of(args.as_of),
-                                     lookback_days=args.lookback_days)
+                                     lookback_days=args.lookback_days,
+                                     key=read_key_file(args.key_file) if args.key_file else None)
     write_json(args.out_dir / "health.json", health)
     write_json(args.out_dir / "accuracy.json", accuracy)
     summary = markdown_summary(health, accuracy)

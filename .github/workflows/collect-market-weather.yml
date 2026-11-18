@@ -38,6 +38,7 @@ jobs:
         continue-on-error: true
         env:
           PIRATE_WEATHER_API_KEY: ${{ secrets.PIRATE_WEATHER_API_KEY }}
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
           OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
           TOMORROW_API_KEYS: ${{ secrets.TOMORROW_API_KEYS }}
@@ -55,10 +56,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python src/record_workflow_timing.py
+      - name: Migrate permitted archives
+        id: migration
+        continue-on-error: true
+        env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
+        run: python src/migrate_archives.py --apply
+
       - name: Report collection health and accuracy
         id: reports
         continue-on-error: true
         env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
         run: python src/report_collection.py --out-dir data/verification/market --github-summary
       - name: Commit collected market data
@@ -75,5 +85,5 @@ jobs:
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
       - name: Report collection failure
-        if: steps.collect.outcome == 'failure' || steps.reports.outcome == 'failure'
+        if: steps.migration.outcome == 'failure' || steps.collect.outcome == 'failure' || steps.reports.outcome == 'failure'
         run: exit 1
