@@ -1,0 +1,2324 @@
+{
+  "collector_finished_at_utc": "2026-11-19T21:59:11.162450Z",
+  "collector_started_at_utc": "2026-11-19T21:54:05.959504Z",
+  "discovery": [
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:54:15.783598Z",
+      "started_at_utc": "2026-11-19T21:54:05.960303Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:54:51.011081Z",
+      "started_at_utc": "2026-11-19T21:54:45.860624Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:55:26.292177Z",
+      "started_at_utc": "2026-11-19T21:55:21.097740Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:56:01.528578Z",
+      "started_at_utc": "2026-11-19T21:55:56.378734Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:56:36.784017Z",
+      "started_at_utc": "2026-11-19T21:56:31.616857Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:57:12.069402Z",
+      "started_at_utc": "2026-11-19T21:57:06.873035Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:57:47.322617Z",
+      "started_at_utc": "2026-11-19T21:57:42.158335Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:58:22.575493Z",
+      "started_at_utc": "2026-11-19T21:58:17.412871Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:58:57.805897Z",
+      "started_at_utc": "2026-11-19T21:58:52.665098Z"
+    },
+    {
+      "events": 64,
+      "failure_count": 0,
+      "finished_at_utc": "2026-11-19T21:59:11.073131Z",
+      "started_at_utc": "2026-11-19T21:59:05.959638Z"
+    }
+  ],
+  "expected": [
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV17",
+      "market_open_time_utc": "2026-11-16T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-17"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV18",
+      "market_open_time_utc": "2026-11-17T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-18"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV19",
+      "market_open_time_utc": "2026-11-18T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-19"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTBOS-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "boston_logan",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTCHI-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "chicago_midway",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTDAL-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "dallas_fort_worth",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTLAX-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "los_angeles_lax",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTMIA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "miami_international",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHNY-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTNYC-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "nyc_central_park",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSFO-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "san_francisco_sfo",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXHIGHTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "open_meteo",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "nws",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "openweathermap",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "pirate_weather",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    },
+    {
+      "event_ticker": "KXLOWTSEA-26NOV20",
+      "market_open_time_utc": "2026-11-19T15:00:00Z",
+      "provider": "visual_crossing",
+      "station_id": "seattle_tacoma",
+      "target_date_local": "2026-11-20"
+    }
+  ],
+  "failure_count": 0,
+  "github_job": "collect",
+  "github_run_attempt": "1",
+  "github_run_id": "44623316032",
+  "job_started_at_utc": "2026-11-19T21:53:49Z",
+  "kind": "market",
+  "requests": [],
+  "runner_ready_at_utc": "2026-11-19T21:53:53Z",
+  "schema_version": 1,
+  "status": "completed",
+  "timing_status": "available",
+  "trigger": "schedule",
+  "trigger_schedule": "57 13,14 * * *",
+  "workflow_created_at_utc": "2026-11-19T21:53:47Z",
+  "workflow_started_at_utc": "2026-11-19T21:53:47Z",
+  "workflow_url": "https://github.com/ZerroCode/Forecast-Accuracy-Dashboard/actions/runs/44623316032"
+}
