@@ -14,6 +14,9 @@ class Cutoff:
     description: str
     sources: tuple[str, ...]   # dataset column prefixes available at the cutoff
     prices_dir: str            # Kalshi prices snapshotted at the same moment
+    # (source, earlier run of the same model for the same day), both published by the cutoff.
+    # How far the forecast moved between them is an input to the uncertainty model.
+    revisions: tuple[tuple[str, str], ...] = ()
 
 
 CUTOFFS = {
@@ -21,9 +24,13 @@ CUTOFFS = {
     # only the 00Z MOS run and ~48h model forecasts exist an hour after Kalshi opens.
     # HRRR does not forecast that far ahead.
     "open": Cutoff("open", "11 AM ET the day before (1 h after Kalshi opens)",
-                   ("mos00", "gfs_day2", "icon_day2", "gem_day2", "ecmwf_day2"), "kalshi_prices_open"),
+                   ("mos00", "gfs_day2", "icon_day2", "gem_day2", "ecmwf_day2"), "kalshi_prices_open",
+                   (("gfs_day2", "gfs_day3"), ("icon_day2", "icon_day3"), ("gem_day2", "gem_day3"),
+                    ("ecmwf_day2", "ecmwf_day3"))),
     "midnight": Cutoff("midnight", "Midnight before the measured day",
-                       ("mos", "gfs_day1", "hrrr_day1", "icon_day1", "gem_day1", "ecmwf_day1"), "kalshi_prices"),
+                       ("mos", "gfs_day1", "hrrr_day1", "icon_day1", "gem_day1", "ecmwf_day1"), "kalshi_prices",
+                       (("mos", "mos00"), ("gfs_day1", "gfs_day2"), ("icon_day1", "icon_day2"),
+                        ("gem_day1", "gem_day2"), ("ecmwf_day1", "ecmwf_day2"))),
 }
 
 # Features may use observations through D-2 only: the official report for D-1 is
@@ -47,7 +54,8 @@ def label(source: str) -> str:
 
 def load_dataset(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
-    missing = {f"{s}_high_f" for c in CUTOFFS.values() for s in c.sources} - set(df.columns)
+    needed = {s for c in CUTOFFS.values() for s in (*c.sources, *(e for _, e in c.revisions))}
+    missing = {f"{s}_high_f" for s in needed} - set(df.columns)
     if missing:
         raise ValueError(f"{path} lacks {sorted(missing)}; run src/backfill_history.py and src/build_dataset.py")
     return df

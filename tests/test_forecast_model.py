@@ -15,12 +15,17 @@ except ImportError:  # The collection workflows install only tzdata.
     pd = None
 
 if pd is not None:
+    from scipy import stats
+    from sklearn.base import BaseEstimator
+
     from forecast_model.data import CUTOFFS, START, TEST_START, VAL_START, split
     from forecast_model.evaluation import score
-    from forecast_model.features import build_features
+    from forecast_model.features import build_features, uncertainty_features
+    from forecast_model.uncertainty import (EMBARGO_DAYS, integer_prob, out_of_fold, predict_sigma,
+                                            prob_scores, sigma_candidates)
 
     CUTOFF = CUTOFFS["midnight"]
-    from forecast_model.markets import bracket_prob, complete_events, normalized_blend
+    from forecast_model.markets import bracket_prob, complete_events, normalized_blend, std_cdf
 
 
 def synthetic(days: int = 60) -> "pd.DataFrame":
@@ -32,8 +37,16 @@ def synthetic(days: int = 60) -> "pd.DataFrame":
         row = {"station_id": station, "date": dates, "obs_high_f": obs.round()}
         for i, source in enumerate(CUTOFF.sources):
             row[f"{source}_high_f"] = obs + i - 2 + rng.normal(0, 1, days)
+        for source, earlier in CUTOFF.revisions:
+            row[f"{earlier}_high_f"] = row[f"{source}_high_f"] + rng.normal(0, 1, days)
         rows.append(pd.DataFrame(row))
     return pd.concat(rows, ignore_index=True)
+
+
+def all_features(df: "pd.DataFrame") -> tuple["pd.DataFrame", list[str]]:
+    df, features = build_features(df, "high", CUTOFF)
+    df, sigma_features = uncertainty_features(df, "high", CUTOFF)
+    return df, features + sigma_features
 
 
 @unittest.skipIf(pd is None, "analysis packages not installed")
@@ -46,8 +59,8 @@ class FeatureTests(unittest.TestCase):
                 changed = df.copy()
                 day = (changed.station_id == "nyc_central_park") & (changed.date == changed_day)
                 changed.loc[day, "obs_high_f"] += 100
-                before, features = build_features(df, "high", CUTOFF)
-                after, _ = build_features(changed, "high", CUTOFF)
+                before, features = all_features(df)
+                after, _ = all_features(changed)
                 row = (before.station_id == "nyc_central_park") & (before.date == "2024-02-15")
                 pd.testing.assert_series_equal(before.loc[row, features].iloc[0],
                                                after.loc[row, features].iloc[0])
@@ -60,10 +73,31 @@ class FeatureTests(unittest.TestCase):
         self.assertAlmostEqual(nyc.loc[20, "mos_bias_7d"], errors[12:19].mean())
 
     def test_bias_does_not_leak_between_cities(self):
-        df, _ = build_features(synthetic(), "high", CUTOFF)
+        df, _ = all_features(synthetic())
         first_miami = df[df.station_id == "miami_international"].iloc[0]
         self.assertTrue(np.isnan(first_miami["mos_bias_7d"]))
         self.assertTrue(np.isnan(first_miami["persistence"]))
+        self.assertTrue(np.isnan(first_miami["recent_abs_err_7d"]))
+
+    def test_revisions_compare_earlier_runs_published_by_the_cutoff(self):
+        def lead(source):  # days ahead; MOS 00Z is the earlier run of the same day as 12Z
+            return {"mos": 1, "mos00": 1.5}.get(source) or int(source.rsplit("day", 1)[1])
+
+        for cutoff in CUTOFFS.values():
+            for source, earlier in cutoff.revisions:
+                self.assertIn(source, cutoff.sources)
+                self.assertEqual(source.split("_")[0], earlier.split("_")[0].replace("mos00", "mos"))
+                self.assertGreater(lead(earlier), lead(source))
+        # One hour after Kalshi opens, no day-1 run or 12Z MOS exists yet.
+        used = {s for pair in CUTOFFS["open"].revisions for s in pair} | set(CUTOFFS["open"].sources)
+        self.assertFalse({s for s in used if s == "mos" or s.endswith("_day1")})
+
+    def test_revision_is_mean_absolute_change_between_runs(self):
+        df, _ = all_features(synthetic())
+        row = df.iloc[10]
+        change = [row[f"{s}_high_f"] - row[f"{e}_high_f"] for s, e in CUTOFF.revisions]
+        self.assertAlmostEqual(row["log_revision"], np.log1p(np.mean(np.abs(change))))
+        self.assertAlmostEqual(row["log_consensus_shift"], np.log1p(abs(np.mean(change))))
 
 
 @unittest.skipIf(pd is None, "analysis packages not installed")
@@ -97,8 +131,17 @@ class MarketTests(unittest.TestCase):
 
     def test_bracket_probabilities_sum_to_one(self):
         for mu, sigma in ((73.4, 1.7), (65.0, 2.0), (80.2, 0.8)):
-            total = sum(bracket_prob(kind, floor, cap, mu, sigma) for kind, floor, cap in self.BRACKETS)
-            self.assertAlmostEqual(total, 1.0, places=9)
+            for nu in (None, 5, 12):
+                total = sum(bracket_prob(kind, floor, cap, mu, sigma, nu) for kind, floor, cap in self.BRACKETS)
+                self.assertAlmostEqual(total, 1.0, places=9)
+
+    def test_student_t_has_unit_variance_and_heavier_tails(self):
+        # sigma keeps meaning the standard deviation when the tail shape changes.
+        unit_t = stats.t(df=5, scale=np.sqrt(3 / 5))
+        self.assertAlmostEqual(unit_t.var(), 1.0)
+        for x in (-3.0, -1.0, 0.4, 2.5):
+            self.assertAlmostEqual(float(std_cdf(x, 5)), unit_t.cdf(x), places=9)
+        self.assertGreater(float(std_cdf(-3.0, 5)), float(std_cdf(-3.0)))
 
     def test_bracket_covers_whole_degrees_it_settles_on(self):
         # 72-73 settles yes on 72 or 73, i.e. a true value in [71.5, 73.5).
@@ -113,6 +156,65 @@ class MarketTests(unittest.TestCase):
         blended = normalized_blend(m, "market_p", "model_p", 0.5)
         self.assertAlmostEqual(blended[:2].sum(), 1.0)
         self.assertEqual(list(complete_events(m).event_ticker.unique()), ["A"])
+
+
+if pd is not None:
+    class RecordsTrainingDates(BaseEstimator):
+        """Predicts 1 for any row whose date it was trained on, so leaks are visible."""
+
+        def fit(self, X, y):
+            self.seen_ = set(X["date"])
+            return self
+
+        def predict(self, X):
+            return X["date"].isin(self.seen_).astype(float).to_numpy()
+
+
+@unittest.skipIf(pd is None, "analysis packages not installed")
+class UncertaintyTests(unittest.TestCase):
+    def test_out_of_fold_never_trains_on_held_out_or_embargoed_days(self):
+        dates = pd.date_range("2024-01-01", "2025-12-31").strftime("%Y-%m-%d")
+        frame = pd.DataFrame({"date": dates, "y": 0.0})
+        self.assertEqual(out_of_fold(RecordsTrainingDates(), ["date"], "y", frame, folds=6).sum(), 0)
+
+        # The days right after a held-out block are excluded too: their trailing features
+        # contain the held-out observations.
+        class Spy(RecordsTrainingDates):
+            fits = []
+
+            def fit(self, X, y):
+                Spy.fits.append(pd.to_datetime(X["date"]))
+                return super().fit(X, y)
+
+        out_of_fold(Spy(), ["date"], "y", frame, folds=6)
+        first_block_end = pd.Timestamp(np.array_split(pd.to_datetime(dates), 6)[0][-1])
+        first_fit = Spy.fits[0]
+        self.assertEqual(first_fit.min(), first_block_end + pd.Timedelta(days=EMBARGO_DAYS + 1))
+
+    def test_sigma_model_learns_that_disagreement_means_larger_errors(self):
+        rng = np.random.default_rng(1)
+        spread = rng.uniform(0.5, 3.0, 6000)
+        X = pd.DataFrame({"log_spread": np.log(spread), "station_id": "nyc_central_park"})
+        error = rng.normal(0, spread)  # the true sigma equals the spread
+        model = sigma_candidates(["log_spread"])["gamma_a0.01"].fit(X, error ** 2)
+        grid = pd.DataFrame({"log_spread": np.log([1.0, 2.5]), "station_id": "nyc_central_park"})
+        low, high = predict_sigma(model, grid)
+        self.assertAlmostEqual(low, 1.0, delta=0.2)
+        self.assertAlmostEqual(high, 2.5, delta=0.3)
+
+    def test_calibrated_forecast_hits_its_intervals(self):
+        rng = np.random.default_rng(2)
+        n = 40000
+        mu, sigma = pd.Series(rng.uniform(40, 90, n)), pd.Series(rng.uniform(1, 4, n))
+        for nu, draw in ((None, rng.standard_normal(n)), (5, rng.standard_t(5, n) * np.sqrt(3 / 5))):
+            scores = prob_scores(mu + sigma * draw, mu, sigma, nu)
+            for level in (50, 80, 90):
+                self.assertAlmostEqual(scores[f"coverage_{level}"], level / 100, delta=0.01)
+
+    def test_whole_degree_probabilities_sum_to_one(self):
+        degrees = np.arange(-300, 401)  # wide enough that the t tails are negligible
+        for nu in (None, 8):
+            self.assertAlmostEqual(integer_prob(degrees, 70.3, 2.2, nu).sum(), 1.0, places=9)
 
 
 if __name__ == "__main__":

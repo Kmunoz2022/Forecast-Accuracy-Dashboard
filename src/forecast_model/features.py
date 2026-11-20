@@ -42,3 +42,29 @@ def build_features(df: pd.DataFrame, metric: str, cutoff: Cutoff) -> tuple[pd.Da
     df["week"] = pd.to_datetime(df["date"]).dt.isocalendar().week.astype(int)
     features += ["persistence", "doy_sin", "doy_cos"]
     return df, features
+
+
+def uncertainty_features(df: pd.DataFrame, metric: str, cutoff: Cutoff) -> tuple[pd.DataFrame, list[str]]:
+    """Signs that a day is hard to forecast, for the uncertainty model. Call after build_features."""
+    df = df.copy()
+    target = target_column(metric)
+    df["log_spread"] = np.log1p(df["ens_spread"])
+
+    # How far each model moved since its previous run for the same day.
+    current = df[[f"{s}_{metric}_f" for s, _ in cutoff.revisions]].to_numpy()
+    earlier = df[[f"{e}_{metric}_f" for _, e in cutoff.revisions]].to_numpy()
+    change = pd.DataFrame(current - earlier, index=df.index)
+    df["log_revision"] = np.log1p(change.abs().mean(axis=1))
+    df["log_consensus_shift"] = np.log1p(change.mean(axis=1).abs())
+
+    # Recent difficulty in each city: trailing error of the bias-corrected average, which is
+    # not fitted, so its errors are honest in every period (a fitted model's are not in training).
+    debiased = df[[f"{s}_debiased" for s in cutoff.sources]].mean(axis=1)
+    error = (debiased - df[target]).abs().groupby(df["station_id"]).shift(OBS_LAG_DAYS)
+    features = ["log_spread", "log_revision", "log_consensus_shift"]
+    for window in (7, 30):
+        name = f"recent_abs_err_{window}d"
+        df[name] = error.groupby(df["station_id"]).transform(
+            lambda s, w=window: s.rolling(w, min_periods=max(3, w // 3)).mean())
+        features.append(name)
+    return df, features + ["doy_sin", "doy_cos"]

@@ -208,9 +208,17 @@ learning and evaluates the result:
 | `data.py` | Loads `dataset.csv`; fixed time split (train to Jun 2025, validate Jul–Dec 2025, test 2026) |
 | `features.py` | Ensemble mean/median/spread, trailing 7/30-day bias per source, bias-corrected forecasts, season, persistence |
 | `models.py` | Ridge regression and gradient boosting, tuned on validation, refit, then scored on test once |
+| `uncertainty.py` | Model 3: a per-day forecast uncertainty and tail shape, learned from out-of-fold errors |
 | `evaluation.py` | Baselines (each source, averages, persistence, climatology) and the error table |
-| `markets.py` | Bracket probabilities from forecasts; scoring against Kalshi prices, paper trading, market/model blend |
+| `markets.py` | Bracket probabilities from forecasts; scoring against settled brackets and Kalshi prices, paper trading, market/model blend |
 | `plots.py` | Report figures |
+
+Kalshi pays on brackets, so each prediction also needs an uncertainty. Model 3 predicts
+it per day from source disagreement, how far forecasts moved since the previous run,
+recent error in that city, and season, instead of using one value per city. It learns
+from the mean model's errors on days held out of its training (contiguous time blocks,
+with a 32-day gap after each held-out block) and chooses a normal or Student-t tail on
+validation. It is scored against every settled 2026 bracket, which needs no prices.
 
 Every result is computed at two prediction cutoffs, each using only what was
 published by then:
@@ -232,6 +240,8 @@ python src/evaluate_models.py   # writes outputs/<cutoff>/metrics.json and figur
 ```
 
 `outputs/` is generated and not committed; re-run the script to recreate it.
+[`notebooks/model_results.ipynb`](notebooks/model_results.ipynb) displays those outputs as
+tables and figures without recomputing them.
 
 ## Extending collection
 

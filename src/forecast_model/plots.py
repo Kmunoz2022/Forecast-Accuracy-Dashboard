@@ -11,7 +11,7 @@ import pandas as pd
 
 from forecast_model.data import CITY, label
 
-ACCENT, BASE = "#2a78d6", "#9aa5b1"
+ACCENT, BASE, MARKET = "#2a78d6", "#9aa5b1", "#eb6834"  # our model, baseline, Kalshi market
 
 
 def bias_by_city(df: pd.DataFrame, metric: str, sources, path: Path) -> None:
@@ -66,17 +66,47 @@ def method_errors(table: pd.DataFrame, title: str, path: Path) -> None:
     _save(fig, path)
 
 
-def calibration(m: pd.DataFrame, model_column: str, path: Path) -> None:
+def calibration(m: pd.DataFrame, series: list[tuple[str, str, str]], title: str, path: Path) -> None:
+    """Reliability diagram for bracket probabilities; `series` holds (column, label, color)."""
     fig, ax = plt.subplots(figsize=(5.5, 5))
     bins = np.linspace(0, 1, 11)
-    for col, label, color in (("market_p", "Kalshi market", BASE), (model_column, "Our model", ACCENT)):
+    ax.plot([0, 1], [0, 1], "--", color="#555", lw=1, label="Perfectly calibrated")
+    for col, label, color in series:
         groups = m.groupby(pd.cut(m[col], bins), observed=True)
-        ax.plot(groups[col].mean(), groups.won.mean(), "o-", label=label, color=color)
-    ax.plot([0, 1], [0, 1], "--", color="#555", lw=1)
+        ax.plot(groups[col].mean(), groups.won.mean(), "o-", label=label, color=color, lw=2, ms=6)
     ax.set_xlabel("Predicted probability")
     ax.set_ylabel("Actual win rate")
-    ax.set_title("Calibration on bracket markets")
+    ax.set_title(title)
+    ax.grid(color="#e6e6e6", lw=0.8)
+    ax.set_axisbelow(True)
     ax.legend()
+    _save(fig, path)
+
+
+def sigma_reliability(error: pd.Series, stations: pd.Series, fixed: pd.Series, per_day: pd.Series,
+                      title: str, path: Path) -> None:
+    """Predicted sigma against the error that followed. On the diagonal, sigma is right."""
+    fig, ax = plt.subplots(figsize=(6, 5))
+    rmse = lambda e: float(np.sqrt(np.mean(e ** 2)))  # noqa: E731
+    by_city = pd.DataFrame({"sigma": fixed, "error": error}).groupby(stations)
+    deciles = pd.DataFrame({"sigma": per_day, "error": error}).groupby(pd.qcut(per_day, 10), observed=True)
+    top = 0.0
+    for groups, label, color, style in ((by_city, "Fixed σ per city (one point per city)", BASE, "o"),
+                                        (deciles, "Model 3: σ per day (tenths of days)", ACCENT, "o-")):
+        x, y = groups.sigma.mean(), groups.error.agg(rmse)
+        order = np.argsort(x.to_numpy())
+        ax.plot(x.to_numpy()[order], y.to_numpy()[order], style, label=label, color=color, lw=2, ms=6)
+        top = max(top, x.max(), y.max())
+    top = float(np.ceil(top + 0.5))
+    ax.plot([0, top], [0, top], "--", color="#555", lw=1, label="Predicted = actual")
+    ax.set_xlim(0, top)
+    ax.set_ylim(0, None)
+    ax.set_xlabel("Predicted uncertainty σ, °F")
+    ax.set_ylabel("Actual error (RMS), °F")
+    ax.set_title(title)
+    ax.grid(color="#e6e6e6", lw=0.8)
+    ax.set_axisbelow(True)
+    ax.legend(fontsize=8, loc="upper left")
     _save(fig, path)
 
 

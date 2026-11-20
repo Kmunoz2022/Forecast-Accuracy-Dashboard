@@ -1,29 +1,51 @@
 """Turn temperature forecasts into Kalshi bracket probabilities and score them against prices."""
 from __future__ import annotations
 
-import math
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.special import ndtr, ndtri, stdtr, stdtrit
 
 
-MIN_SIGMA = 0.8  # floor on per-city uncertainty, °F, so no bracket gets near-certainty
+MIN_SIGMA = 0.8  # floor on forecast uncertainty, °F, so no bracket gets near-certainty
 
 
-def phi(x: float) -> float:
-    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+def std_cdf(z, nu: float | None = None):
+    """CDF of a unit-variance normal (nu=None) or Student-t with nu degrees of freedom.
+
+    The t is rescaled to unit variance, so sigma means the standard deviation either way.
+    """
+    return ndtr(z) if nu is None else stdtr(nu, z * np.sqrt(nu / (nu - 2)))
 
 
-def bracket_prob(strike_type: str, floor: float, cap: float, mu: float, sigma: float) -> float:
-    # Settled values are whole degrees; integrate the normal over each bracket's integers.
+def std_ppf(q, nu: float | None = None):
+    return ndtri(q) if nu is None else stdtrit(nu, q) * np.sqrt((nu - 2) / nu)
+
+
+def bracket_prob(strike_type: str, floor: float, cap: float, mu: float, sigma: float,
+                 nu: float | None = None) -> float:
+    # Settled values are whole degrees; integrate the distribution over each bracket's integers.
+    def cdf(x):
+        return float(std_cdf((x - mu) / sigma, nu))
+
     if strike_type == "between":
-        return phi((cap + 0.5 - mu) / sigma) - phi((floor - 0.5 - mu) / sigma)
+        return cdf(cap + 0.5) - cdf(floor - 0.5)
     if strike_type == "greater":
-        return 1 - phi((floor + 0.5 - mu) / sigma)
+        return 1 - cdf(floor + 0.5)
     if strike_type == "less":
-        return phi((cap - 0.5 - mu) / sigma)
+        return cdf(cap - 0.5)
     return float("nan")
+
+
+def load_settled_markets(history: Path, metric: str) -> pd.DataFrame:
+    """Every settled bracket for `metric`, priced or not, from events with exactly one winner."""
+    frames = [pd.read_csv(path) for path in sorted((history / "kalshi").glob("*.csv"))]
+    if not frames:
+        return pd.DataFrame()
+    m = pd.concat(frames, ignore_index=True)
+    m = m[(m.metric == metric) & m.strike_type.isin(["between", "greater", "less"]) & m.result.isin(["yes", "no"])]
+    return complete_events(m.assign(won=(m.result == "yes").astype(int)))
 
 
 def load_priced_markets(history: Path, prices_dir: str) -> pd.DataFrame:
@@ -45,9 +67,11 @@ def load_priced_markets(history: Path, prices_dir: str) -> pd.DataFrame:
     return m
 
 
-def add_model_probs(m: pd.DataFrame, column: str, mu: pd.Series, sigma: dict[str, float]) -> pd.DataFrame:
-    p = [bracket_prob(r.strike_type, r.floor_strike, r.cap_strike, mu_i, max(sigma[r.station_id], MIN_SIGMA))
-         for r, mu_i in zip(m.itertuples(), mu)]
+def add_model_probs(m: pd.DataFrame, column: str, mu: pd.Series, sigma: pd.Series,
+                    nu: float | None = None) -> pd.DataFrame:
+    """Bracket probabilities from a forecast; `mu` and `sigma` are aligned with `m`'s rows."""
+    p = [bracket_prob(r.strike_type, r.floor_strike, r.cap_strike, mu_i, max(sigma_i, MIN_SIGMA), nu)
+         for r, mu_i, sigma_i in zip(m.itertuples(), mu, sigma)]
     return m.assign(**{column: np.clip(p, 1e-4, 1 - 1e-4)})
 
 
