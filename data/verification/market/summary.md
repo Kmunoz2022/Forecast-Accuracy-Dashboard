@@ -1,6 +1,6 @@
 # Live forecast collection
 
-As of 2026-11-19T21:59:11Z — complete analysis.
+As of 2026-11-20T03:05:51Z — complete analysis.
 
 Expected captures: 3380. Ranking: available.
 
