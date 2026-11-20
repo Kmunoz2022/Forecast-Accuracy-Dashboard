@@ -18,7 +18,7 @@
   },
   "comparison_tolerance_seconds": 600,
   "excluded_providers": [],
-  "generated_at_utc": "2026-11-20T20:04:38Z",
+  "generated_at_utc": "2026-11-20T21:41:21Z",
   "groups": [
     {
       "candidate_cases": 24,
@@ -1137,53 +1137,53 @@
       "status": "insufficient_common_history"
     },
     {
-      "candidate_cases": 175,
+      "candidate_cases": 176,
       "capture_time_mismatch_cases": 6,
       "cohort": "market_late",
-      "common_cases": 60,
+      "common_cases": 61,
       "distinct_dates": 8,
       "duplicate_cases": 0,
       "metric": "high",
       "metrics": [
         {
-          "bias_f": -1.3,
-          "mae_f": 1.8,
-          "n": 60,
+          "bias_f": -1.2295,
+          "mae_f": 1.8197,
+          "n": 61,
           "provider": "nws",
-          "within_1f": 0.4667,
-          "within_2f": 0.6667
+          "within_1f": 0.459,
+          "within_2f": 0.6557
         },
         {
-          "bias_f": -2.4083,
-          "mae_f": 2.6917,
-          "n": 60,
+          "bias_f": -2.3443,
+          "mae_f": 2.6721,
+          "n": 61,
           "provider": "open_meteo",
-          "within_1f": 0.2167,
-          "within_2f": 0.45
+          "within_1f": 0.2131,
+          "within_2f": 0.459
         },
         {
-          "bias_f": -1.2805,
-          "mae_f": 2.3092,
-          "n": 60,
+          "bias_f": -1.1967,
+          "mae_f": 2.3341,
+          "n": 61,
           "provider": "openweathermap",
-          "within_1f": 0.2333,
-          "within_2f": 0.5
+          "within_1f": 0.2295,
+          "within_2f": 0.4918
         },
         {
-          "bias_f": -2.2233,
-          "mae_f": 2.3727,
-          "n": 60,
+          "bias_f": -2.1451,
+          "mae_f": 2.3756,
+          "n": 61,
           "provider": "pirate_weather",
-          "within_1f": 0.2,
-          "within_2f": 0.4333
+          "within_1f": 0.1967,
+          "within_2f": 0.4262
         },
         {
-          "bias_f": -2.5567,
-          "mae_f": 2.5567,
-          "n": 60,
+          "bias_f": -2.4885,
+          "mae_f": 2.541,
+          "n": 61,
           "provider": "visual_crossing",
-          "within_1f": 0.1667,
-          "within_2f": 0.3667
+          "within_1f": 0.1639,
+          "within_2f": 0.377
         }
       ],
       "missing_provider_cases": 109,
@@ -1509,53 +1509,53 @@
       "status": "scored"
     },
     {
-      "candidate_cases": 21,
+      "candidate_cases": 22,
       "capture_time_mismatch_cases": 0,
       "cohort": "market_late",
-      "common_cases": 7,
-      "distinct_dates": 7,
+      "common_cases": 8,
+      "distinct_dates": 8,
       "duplicate_cases": 0,
       "metric": "high",
       "metrics": [
         {
-          "bias_f": -1.4286,
-          "mae_f": 1.7143,
-          "n": 7,
+          "bias_f": -0.875,
+          "mae_f": 1.875,
+          "n": 8,
           "provider": "nws",
-          "within_1f": 0.5714,
-          "within_2f": 0.5714
+          "within_1f": 0.5,
+          "within_2f": 0.5
         },
         {
-          "bias_f": -2.7143,
-          "mae_f": 3.3429,
-          "n": 7,
+          "bias_f": -2.1875,
+          "mae_f": 3.1125,
+          "n": 8,
           "provider": "open_meteo",
-          "within_1f": 0.1429,
-          "within_2f": 0.4286
+          "within_1f": 0.125,
+          "within_2f": 0.5
         },
         {
-          "bias_f": -2.4257,
-          "mae_f": 2.5114,
-          "n": 7,
+          "bias_f": -1.6438,
+          "mae_f": 2.6762,
+          "n": 8,
           "provider": "openweathermap",
-          "within_1f": 0.2857,
-          "within_2f": 0.4286
+          "within_1f": 0.25,
+          "within_2f": 0.375
         },
         {
-          "bias_f": -1.8014,
-          "mae_f": 2.51,
-          "n": 7,
+          "bias_f": -1.2575,
+          "mae_f": 2.515,
+          "n": 8,
           "provider": "pirate_weather",
-          "within_1f": 0.2857,
-          "within_2f": 0.4286
+          "within_1f": 0.25,
+          "within_2f": 0.375
         },
         {
-          "bias_f": -1.9571,
-          "mae_f": 1.9571,
-          "n": 7,
+          "bias_f": -1.5125,
+          "mae_f": 1.9125,
+          "n": 8,
           "provider": "visual_crossing",
-          "within_1f": 0.4286,
-          "within_2f": 0.5714
+          "within_1f": 0.375,
+          "within_2f": 0.625
         }
       ],
       "missing_provider_cases": 14,
