@@ -26,6 +26,7 @@ from weather_pipeline.windows import local_day, standard_day
 STATION = load_stations(ROOT / "config/stations.csv")[0]
 AS_OF = datetime(2026, 10, 25, 12, 17, tzinfo=timezone.utc)
 SECRET = "test-provider-secret-never-save-this"
+ARCHIVE_KEY = "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
 
 
 def payload_for(adapter, start, count):
@@ -198,7 +199,8 @@ class ForecastAdapterTests(unittest.TestCase):
 
 class ProviderConfigurationTests(unittest.TestCase):
     def test_secrets_enable_both_providers_in_both_workflows(self):
-        credentials = {"PIRATE_WEATHER_API_KEY": "pirate-secret", "VISUALCROSSING_API_KEY": SECRET}
+        credentials = {"PIRATE_WEATHER_API_KEY": "pirate-secret", "VISUALCROSSING_API_KEY": "visual-api-secret",
+                       "DATA_ENCRYPTION_KEY": ARCHIVE_KEY}
         for window in (None, standard_day(date(2026, 10, 26), STATION.timezone)):
             with self.subTest(window=window), patch.dict("os.environ", credentials, clear=True), \
                     patch.object(collect_forecasts, "fetch_pirate_weather") as pirate, \
@@ -207,9 +209,10 @@ class ProviderConfigurationTests(unittest.TestCase):
                 providers["pirate_weather"].fetch(STATION)
                 providers["visual_crossing"].fetch(STATION)
                 pirate.assert_called_once_with(STATION, retrieved_at=AS_OF, api_key="pirate-secret", window=window)
-                visual.assert_called_once_with(STATION, retrieved_at=AS_OF, api_key=SECRET, window=window)
-                self.assertEqual(SECRET, providers["visual_crossing"].archive_key)
-                self.assertNotIn(SECRET, repr(providers))
+                visual.assert_called_once_with(STATION, retrieved_at=AS_OF, api_key="visual-api-secret", window=window)
+                self.assertEqual("visual-api-secret", providers["visual_crossing"].legacy_archive_key)
+                self.assertEqual(ARCHIVE_KEY, providers["visual_crossing"].archive_key)
+                self.assertNotIn(ARCHIVE_KEY, repr(providers))
 
     def test_missing_keys_skip_optional_providers(self):
         with patch.dict("os.environ", {}, clear=True):
@@ -223,19 +226,19 @@ class EncryptedArchiveTests(unittest.TestCase):
         row = {"provider": "visual_crossing", "station_id": "test", "forecast_high_f": 71.25}
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "forecast.jsonl.enc"
-            self.assertEqual(1, upsert_jsonl(path, [row], key_fields=("station_id",), encryption_key=SECRET))
+            self.assertEqual(1, upsert_jsonl(path, [row], key_fields=("station_id",), encryption_key=ARCHIVE_KEY))
             original = path.read_bytes()
             self.assertNotIn(b"forecast_high_f", original)
-            self.assertNotIn(SECRET.encode(), original)
-            self.assertEqual([row], read_jsonl(path, encryption_key=SECRET))
-            self.assertEqual(0, upsert_jsonl(path, [row], key_fields=("station_id",), encryption_key=SECRET))
+            self.assertNotIn(ARCHIVE_KEY.encode(), original)
+            self.assertEqual([row], read_jsonl(path, encryption_key=ARCHIVE_KEY))
+            self.assertEqual(0, upsert_jsonl(path, [row], key_fields=("station_id",), encryption_key=ARCHIVE_KEY))
             self.assertEqual(original, path.read_bytes())
             self.assertEqual([path], list(Path(directory).iterdir()))
 
     def test_wrong_key_and_tampering_do_not_overwrite_archive(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "forecast.jsonl.enc"
-            upsert_jsonl(path, [{"id": 1}], key_fields=("id",), encryption_key=SECRET)
+            upsert_jsonl(path, [{"id": 1}], key_fields=("id",), encryption_key=ARCHIVE_KEY)
             original = path.read_bytes()
             with self.assertRaisesRegex(ValueError, "Cannot decrypt"):
                 upsert_jsonl(path, [{"id": 2}], key_fields=("id",), encryption_key="wrong-key")
@@ -244,11 +247,11 @@ class EncryptedArchiveTests(unittest.TestCase):
             corrupt[-20] ^= 1
             path.write_bytes(corrupt)
             with self.assertRaisesRegex(ValueError, "Cannot decrypt"):
-                read_jsonl(path, encryption_key=SECRET)
+                read_jsonl(path, encryption_key=ARCHIVE_KEY)
 
     def test_encrypted_storage_requires_key_and_correct_extension(self):
         with tempfile.TemporaryDirectory() as directory:
-            for filename, secret in (("forecast.json", SECRET), ("forecast.json.enc", None)):
+            for filename, secret in (("forecast.json", ARCHIVE_KEY), ("forecast.json.enc", None)):
                 with self.subTest(filename=filename):
                     path = Path(directory) / filename
                     with self.assertRaises(ValueError):
@@ -261,7 +264,7 @@ class EncryptedArchiveTests(unittest.TestCase):
                      "target_date_local": "2026-10-26", "snapshot_date_utc": "2026-10-25",
                      "forecast_high_f": 71.25}, {"private_raw": "weather"}, "test")
         request = Mock(side_effect=fetch)
-        provider = collect_forecasts.EnabledProvider("visual_crossing", request, archive_key=SECRET)
+        provider = collect_forecasts.EnabledProvider("visual_crossing", request, archive_key=ARCHIVE_KEY)
         with tempfile.TemporaryDirectory() as directory, \
                 patch.object(collect_forecasts, "configured_providers", return_value=[provider]), \
                 patch.object(collect_forecasts, "load_stations", return_value=[STATION]), \
@@ -272,12 +275,13 @@ class EncryptedArchiveTests(unittest.TestCase):
             self.assertEqual(0, collect_forecasts.main())
             self.assertEqual(1, request.call_count)
             files = [p for p in Path(directory).rglob("*") if p.is_file()]
-            self.assertEqual(2, len(files))
-            self.assertTrue(all(p.suffix == ".enc" for p in files))
+            weather_files = [p for p in files if "forecasts" in p.parts or "raw" in p.parts]
+            self.assertEqual(2, len(weather_files))
+            self.assertTrue(all(p.suffix == ".enc" for p in weather_files))
             self.assertTrue(all(b"private_raw" not in p.read_bytes() for p in files))
             self.assertTrue(all(b"forecast_high_f" not in p.read_bytes() for p in files))
             path = provider.output_path(Path(directory) / "forecasts/2026/10/2026-10-25.jsonl")
-            self.assertEqual(71.25, read_jsonl(path, encryption_key=SECRET)[0]["forecast_high_f"])
+            self.assertEqual(71.25, read_jsonl(path, encryption_key=ARCHIVE_KEY)[0]["forecast_high_f"])
 
     def test_export_preserves_daily_and_market_datasets_without_network(self):
         daily = {"provider": "visual_crossing", "station_id": STATION.station_id,
@@ -291,11 +295,11 @@ class EncryptedArchiveTests(unittest.TestCase):
             source_files = []
             for category, row in (("forecasts", daily), ("market_forecasts", market)):
                 source = root / category / "2026/10/2026-10-25.jsonl.visual_crossing.enc"
-                upsert_jsonl(source, [row], key_fields=("provider",), encryption_key=SECRET)
+                upsert_jsonl(source, [row], key_fields=("provider",), encryption_key=ARCHIVE_KEY)
                 source_files.append(source)
             original = [p.read_bytes() for p in source_files]
-            self.assertEqual((2, []), export_forecasts(root, SECRET))
-            self.assertEqual((0, []), export_forecasts(root, SECRET))
+            self.assertEqual((2, []), export_forecasts(root, ARCHIVE_KEY))
+            self.assertEqual((0, []), export_forecasts(root, ARCHIVE_KEY))
             network.assert_not_called()
             for category, row in (("forecasts", daily), ("market_forecasts", market)):
                 output = root / "private/visual_crossing" / category / "2026/10/2026-10-25.jsonl"
@@ -323,7 +327,7 @@ class EncryptedArchiveTests(unittest.TestCase):
                 patch("sys.stderr", new_callable=io.StringIO):
             public = Path(directory) / "forecasts/2026/10/2026-10-25.jsonl"
             encrypted = providers[0].output_path(public)
-            upsert_jsonl(encrypted, [{"id": 1}], key_fields=("id",), encryption_key=SECRET)
+            upsert_jsonl(encrypted, [{"id": 1}], key_fields=("id",), encryption_key=ARCHIVE_KEY)
             original = encrypted.read_bytes()
             self.assertEqual(1, collect_forecasts.main())
             private_fetch.assert_not_called()

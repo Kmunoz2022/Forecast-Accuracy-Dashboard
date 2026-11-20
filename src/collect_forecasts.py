@@ -4,12 +4,13 @@ import argparse
 import os
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 from zoneinfo import ZoneInfo
 
 from weather_pipeline.config import Station, load_stations
+from weather_pipeline.encryption import configured_key
 from weather_pipeline.http import RequestError
 from weather_pipeline.providers.nws import fetch_forecast as fetch_nws
 from weather_pipeline.providers.open_meteo import fetch_forecast as fetch_open_meteo
@@ -19,7 +20,8 @@ from weather_pipeline.providers.tomorrow_io import fetch_forecast as fetch_tomor
 from weather_pipeline.providers.visual_crossing import fetch_forecast as fetch_visual_crossing
 from weather_pipeline.providers.weatherbit import fetch_forecast as fetch_weatherbit
 from weather_pipeline.storage import read_jsonl, upsert_jsonl, write_json
-from weather_pipeline.windows import ForecastWindow
+from weather_pipeline.telemetry import RunLog, failure_reason, now_utc
+from weather_pipeline.windows import ForecastWindow, local_day, utc_text
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -31,11 +33,21 @@ class EnabledProvider:
     slug: str
     fetch: Callable[[Station], tuple[dict[str, Any], dict[str, Any], str]]
     archive_key: str | None = field(default=None, repr=False)
+    legacy_archive_key: str | None = field(default=None, repr=False)
 
     def output_path(self, path: Path) -> Path:
         if self.archive_key is not None:
             return path.with_name(f"{path.name}.{self.slug}.enc")
         return path
+
+    def existing_rows(self, path: Path) -> list[dict]:
+        rows = read_jsonl(self.output_path(path), encryption_key=self.archive_key,
+                          legacy_encryption_key=self.legacy_archive_key)
+        if self.archive_key is not None:
+            # Until migration, successful plaintext captures must still suppress a
+            # replacement request. Never rewrite their original issue/arrival times.
+            rows += [r for r in read_jsonl(path) if r.get("provider") == self.slug]
+        return rows
 
 
 def parse_args() -> argparse.Namespace:
@@ -99,6 +111,7 @@ def configured_providers(
                     api_key=openweather_key,
                     window=window,
                 ),
+                archive_key=configured_key(),
             )
         )
     else:
@@ -111,6 +124,7 @@ def configured_providers(
             fetch=lambda station: fetch_pirate_weather(
                 station, retrieved_at=retrieved_at, api_key=pirate_key, window=window,
             ),
+            archive_key=configured_key(),
         ))
     else:
         announce("PIRATE_WEATHER_API_KEY is not set; skipping Pirate Weather")
@@ -122,7 +136,7 @@ def configured_providers(
             fetch=lambda station: fetch_visual_crossing(
                 station, retrieved_at=retrieved_at, api_key=visual_crossing_key, window=window,
             ),
-            archive_key=visual_crossing_key,
+            archive_key=configured_key(), legacy_archive_key=visual_crossing_key,
         ))
     else:
         announce("VISUALCROSSING_API_KEY is not set; skipping Visual Crossing")
@@ -139,6 +153,7 @@ def configured_providers(
                     retrieved_at=retrieved_at,
                     api_key=weatherbit_key,
                 ),
+                archive_key=configured_key(),
             )
         )
     elif weatherbit_key:
@@ -158,6 +173,7 @@ def configured_providers(
                     api_key=tomorrow_key,
                     window=window,
                 ),
+                archive_key=configured_key(),
             )
         )
     elif tomorrow_key:
@@ -181,7 +197,13 @@ def main() -> int:
     if not stations:
         print("No active stations; no requests made.")
         return 0
-    providers = configured_providers(retrieved_at)
+    try:
+        providers = configured_providers(retrieved_at)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    clock = (lambda: retrieved_at) if args.as_of else now_utc
+    run = RunLog(args.data_dir, "daily", clock=clock)
     snapshot_date = retrieved_at.date().isoformat()
     year, month, _ = snapshot_date.split("-")
     output_path = args.data_dir / "forecasts" / year / month / f"{snapshot_date}.jsonl"
@@ -193,17 +215,32 @@ def main() -> int:
         ).isoformat()
         for station in stations
     }
+    run.expect([{"provider": p.slug, "station_id": s.station_id,
+                 "target_date_local": targets[s.station_id], "snapshot_date_utc": snapshot_date}
+                for p in providers for s in stations])
+    audit_path = args.data_dir / "daily_collection" / year / month / f"{snapshot_date}.jsonl"
+
+    def audit(provider, station, status, **metadata):
+        upsert_jsonl(audit_path, [{"provider": provider.slug, "station_id": station.station_id,
+                     "target_date_local": targets[station.station_id], "snapshot_date_utc": snapshot_date,
+                     "checked_at_utc": utc_text(clock()), "status": status, **metadata}],
+                     key_fields=KEY_FIELDS, replace=True,
+                     ignore_compare_fields=frozenset({"checked_at_utc"}))
+
     for provider in providers:
         provider_path = provider.output_path(output_path)
         try:
             existing_keys = {
                 tuple(row[field] for field in KEY_FIELDS)
-                for row in read_jsonl(provider_path, encryption_key=provider.archive_key)
+                for row in provider.existing_rows(output_path)
             }
         except Exception as exc:
-            failures.append(f"{provider.slug}/archive: {exc}")
+            failures.append(f"{provider.slug}/archive: {failure_reason(exc)}")
+            for station in stations:
+                audit(provider, station, "archive_unreadable")
             continue
         records = []
+        stopped = False
         for station in stations:
             local_target = targets[station.station_id]
             expected_key = (provider.slug, station.station_id, local_target, snapshot_date)
@@ -212,9 +249,25 @@ def main() -> int:
                     f"Skipping existing {provider.slug} snapshot for "
                     f"{station.station_id} ({local_target})"
                 )
+                audit(provider, station, "existing")
                 continue
+            if stopped:
+                audit(provider, station, "provider_unavailable")
+                continue
+            started = clock()
             try:
-                record, payload, _ = provider.fetch(station)
+                # Build the adapter with this request's time, not the job's start.
+                fresh = next(p for p in configured_providers(started, quiet=True) if p.slug == provider.slug)
+                record, payload, _ = fresh.fetch(station)
+                finished = clock()
+                if record["target_date_local"] != local_target:
+                    raise ValueError("Local target date changed during collection")
+                window = local_day(date.fromisoformat(local_target), station.timezone)
+                if finished >= window.start:
+                    raise ValueError("Forecast response arrived after the measurement day began")
+                record.update(snapshot_date_utc=snapshot_date,
+                              request_started_at_utc=utc_text(started), retrieved_at_utc=utc_text(finished),
+                              collection_run=run.path.name, **window.metadata())
                 if args.save_raw:
                     raw_path = (
                         args.data_dir
@@ -228,15 +281,20 @@ def main() -> int:
                     write_json(provider.output_path(raw_path), payload,
                                encryption_key=provider.archive_key)
                 records.append(record)
+                run.request({"provider": provider.slug, "station_id": station.station_id,
+                             "target_date_local": local_target}, started, finished)
                 print(
                     f"Collected {provider.slug} {station.station_id} forecast "
                     f"for {record['target_date_local']}"
                 )
             except Exception as exc:  # continue so one location cannot hide other successes
-                failures.append(f"{provider.slug}/{station.station_id}: {exc}")
+                run.request({"provider": provider.slug, "station_id": station.station_id,
+                             "target_date_local": local_target}, started, clock(), exc)
+                audit(provider, station, "request_failed", reason=failure_reason(exc))
+                failures.append(f"{provider.slug}/{station.station_id}: {failure_reason(exc)}")
                 if isinstance(exc, RequestError) and exc.status_code in {401, 403, 429}:
                     print(f"Stopping {provider.slug}: authentication/access/quota error; see failure report.")
-                    break
+                    stopped = True
 
         try:
             changes += upsert_jsonl(
@@ -246,9 +304,18 @@ def main() -> int:
                 replace=args.refresh,
                 ignore_compare_fields=frozenset({"retrieved_at_utc"}),
                 encryption_key=provider.archive_key,
+                legacy_encryption_key=provider.legacy_archive_key,
             )
+            saved = {r["station_id"] for r in records}
+            for station in stations:
+                if station.station_id in saved:
+                    audit(provider, station, "saved")
         except Exception as exc:
-            failures.append(f"{provider.slug}/archive: {exc}")
+            failures.append(f"{provider.slug}/archive: {failure_reason(exc)}")
+            for station in stations:
+                if any(r["station_id"] == station.station_id for r in records):
+                    audit(provider, station, "archive_failed")
+    run.finish(len(failures))
     print(f"Forecast rows changed: {changes}")
     if failures:
         print("Forecast collection failures:", file=sys.stderr)

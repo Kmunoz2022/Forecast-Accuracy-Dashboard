@@ -1,5 +1,3 @@
-
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -212,6 +210,7 @@ tempCodeRunnerFile.py
 *.jsonl.tmp
 *.csv.tmp
 *.enc.tmp
+*.migration.tmp
 
 # Private decrypted provider exports
 data/private/

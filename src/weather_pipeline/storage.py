@@ -1,17 +1,20 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any, Iterable
 
 
-def _read_text(path: Path, encryption_key: str | None) -> str:
+def _read_text(path: Path, encryption_key: str | None, legacy_encryption_key: str | None = None) -> str:
     if path.suffix == ".enc":
-        from weather_pipeline.encryption import decrypt
+        from weather_pipeline.encryption import MAGIC, decrypt
 
-        if not encryption_key:
+        content = path.read_bytes()
+        key = legacy_encryption_key if content.startswith(MAGIC) and legacy_encryption_key else encryption_key
+        if not key:
             raise ValueError("An encryption key is required to read this archive")
-        return decrypt(path.read_bytes(), encryption_key)
+        return decrypt(content, key)
     if encryption_key is not None:
         raise ValueError("Encrypted archives must use the .enc extension")
     return path.read_text(encoding="utf-8")
@@ -31,15 +34,19 @@ def _write_text(path: Path, rendered: str, encryption_key: str | None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = path.with_suffix(path.suffix + ".tmp")
     # The temporary file also contains only ciphertext for encrypted archives.
-    temporary_path.write_bytes(content)
+    descriptor = os.open(temporary_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(descriptor, "wb") as handle:
+        os.fchmod(handle.fileno(), 0o600)
+        handle.write(content)
     temporary_path.replace(path)
 
 
-def read_jsonl(path: Path, *, encryption_key: str | None = None) -> list[dict[str, Any]]:
+def read_jsonl(path: Path, *, encryption_key: str | None = None,
+               legacy_encryption_key: str | None = None) -> list[dict[str, Any]]:
     if not path.exists():
         return []
     rows: list[dict[str, Any]] = []
-    for line_number, line in enumerate(_read_text(path, encryption_key).splitlines(), start=1):
+    for line_number, line in enumerate(_read_text(path, encryption_key, legacy_encryption_key).splitlines(), start=1):
         if line.strip():
             try:
                 rows.append(json.loads(line))
@@ -63,8 +70,9 @@ def upsert_jsonl(
     replace: bool = False,
     ignore_compare_fields: frozenset[str] = frozenset(),
     encryption_key: str | None = None,
+    legacy_encryption_key: str | None = None,
 ) -> int:
-    existing = read_jsonl(path, encryption_key=encryption_key)
+    existing = read_jsonl(path, encryption_key=encryption_key, legacy_encryption_key=legacy_encryption_key)
     rows_by_key = {_key(row, key_fields): row for row in existing}
     changes = 0
 

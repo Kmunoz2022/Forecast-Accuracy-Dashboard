@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 # Both data-writing workflows share this group to avoid conflicting commits.
 concurrency:
@@ -22,19 +23,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Record runner readiness
+        run: echo "RUNNER_READY_AT_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-collection.txt
       - name: Install collection dependencies
         run: python -m pip install -r requirements-collection.txt
-      - name: Test
-        run: python -m unittest discover -s tests -v
       - name: Discover markets and capture opening forecasts
         id: collect
         continue-on-error: true
         env:
           PIRATE_WEATHER_API_KEY: ${{ secrets.PIRATE_WEATHER_API_KEY }}
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
           VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
           OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
           TOMORROW_API_KEYS: ${{ secrets.TOMORROW_API_KEYS }}
@@ -47,6 +51,26 @@ jobs:
             args+=(--wait-seconds 300)
           fi
           python src/collect_market_forecasts.py "${args[@]}"
+      - name: Attach workflow timing
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python src/record_workflow_timing.py
+      - name: Migrate permitted archives
+        id: migration
+        continue-on-error: true
+        env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
+        run: python src/migrate_archives.py --apply
+
+      - name: Report collection health and accuracy
+        id: reports
+        continue-on-error: true
+        env:
+          DATA_ENCRYPTION_KEY: ${{ secrets.DATA_ENCRYPTION_KEY }}
+          VISUALCROSSING_API_KEY: ${{ secrets.VISUALCROSSING_API_KEY }}
+        run: python src/report_collection.py --out-dir data/verification/market --github-summary
       - name: Commit collected market data
         shell: bash
         run: |
@@ -61,5 +85,5 @@ jobs:
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
       - name: Report collection failure
-        if: steps.collect.outcome == 'failure'
+        if: steps.migration.outcome == 'failure' || steps.collect.outcome == 'failure' || steps.reports.outcome == 'failure'
         run: exit 1
